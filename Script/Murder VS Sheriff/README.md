@@ -1,6 +1,6 @@
 # Murder vs Sheriff
 
-![Game Image](Script/Murder%20VS%20Sheriff/images.jpeg)
+![Game Image](https://raw.githubusercontent.com/lucent-hub/Lucent/refs/heads/main/Script/Murder%20VS%20Sheriff/images.jpeg)
 
 ## Features
 
