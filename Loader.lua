@@ -1,3 +1,4 @@
+-- studio fluent Roulette lua
 local Players = game:GetService("Players")
 local TweenService = game:GetService("TweenService")
 local MarketplaceService = game:GetService("MarketplaceService")
@@ -15,7 +16,9 @@ local Config = {
         Button = Color3.fromRGB(60, 60, 70)
     },
     Discord = "https://discord.gg/SdTStha6p3",
-    ValidKeys = {}, -- Keys will be loaded from Discord
+    ValidKeys = {
+        "STXR2020"  -- The only valid key
+    },
     KeyFile = "LucentKey.txt",
     SupportedGames = {
         [12355337193] = { -- Murderers VS Sheriffs DUELS
@@ -33,7 +36,7 @@ local Config = {
 -- Key system with file checking
 local KeySystem = {
     Attempts = 0,
-    MaxAttempts = 3,
+    MaxAttempts = 4,
     Verified = false,
     SavedKeys = {}
 }
@@ -61,11 +64,20 @@ local function SaveKeyToFile(key)
     return success
 end
 
--- Validate key against saved keys
+-- Validate key against both config and saved keys
 local function ValidateKey(input)
     input = input:upper():gsub("%s+", "")
     
-    -- Check saved keys
+    -- Check config keys first
+    for _, key in pairs(Config.ValidKeys) do
+        if input == key then
+            KeySystem.Verified = true
+            SaveKeyToFile(key)  -- Save valid key to file
+            return true
+        end
+    end
+    
+    -- Check saved keys if config keys don't match
     for _, key in pairs(KeySystem.SavedKeys) do
         if input == key then
             KeySystem.Verified = true
@@ -76,6 +88,7 @@ local function ValidateKey(input)
     KeySystem.Attempts = KeySystem.Attempts + 1
     return false
 end
+
 
 -- Create the UI
 local function CreateLoader()
