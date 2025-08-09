@@ -1,21 +1,17 @@
 # Murder vs Sheriff
 
-![MAN SHUT THE FUCK UP](Script/Murder VS Sheriff/images.jpeg)
+![Game Image](Script/Murder%20VS%20Sheriff/images.jpeg)
 
 ## Features
 
 - Only hitbox
-- customize hitbox
+- Customize hitbox
+
 ---
 
 ## Installation
 
-- copy script
-- go to ur exec (delta krnl etc..)
-- paste and execute 
-- enjoy :)
-
-1. Clone this repository:  
-   ```bash
-   git clone https://github.com/yourusername/murder-vs-sheriff.git
-   
+- Copy script  
+- Go to your executor (Delta, KRNL, etc.)  
+- Paste and execute  
+- Enjoy :)
