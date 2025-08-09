@@ -52,7 +52,7 @@ title.Size = UDim2.new(1, -64, 0, 20)
 
 title.Position = UDim2.new(0, 34, 0, 8)
 
-title.Text = "Lucent Hub | M vs S"
+title.Text = "Lucent Hub"
 
 title.TextColor3 = Color3.new(1, 1, 1)
 
@@ -70,7 +70,7 @@ description.Size = UDim2.new(1, -20, 0, 16)
 
 description.Position = UDim2.new(0, 10, 0, 28)
 
-description.Text = "Murder vs sheriff | cloud-official.github.io/EXE"
+description.Text = "Murder vs sheriff"
 
 description.TextColor3 = Color3.fromRGB(160, 160, 160)
 
