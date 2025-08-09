@@ -1,6 +1,6 @@
 # Murder vs Sheriff
 
-![Game Banner](img.png)
+![MAN SHUT THE FUCK UP](Script/Murder VS Sheriff/images.jpeg)
 
 ## Features
 
