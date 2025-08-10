@@ -1,16 +1,17 @@
+-- Lucent UI executor version
 local TweenService = game:GetService("TweenService")
 local UserInputService = game:GetService("UserInputService")
 
 local LucentUI = {}
 LucentUI.__index = LucentUI
 
--- Utility to create frames with rounded corners & background
+-- Utility: create rounded frame with blue theme & glow stroke
 local function createRoundedFrame(parent, size, position, bgColor, transparency)
     local frame = Instance.new("Frame")
     frame.Size = size
     frame.Position = position or UDim2.new(0, 0, 0, 0)
-    frame.BackgroundColor3 = bgColor or Color3.fromRGB(25, 50, 100)
-    frame.BackgroundTransparency = transparency or 0.3
+    frame.BackgroundColor3 = bgColor or Color3.fromRGB(15, 40, 85)
+    frame.BackgroundTransparency = transparency or 0.4
     frame.BorderSizePixel = 0
     frame.Parent = parent
 
@@ -18,10 +19,9 @@ local function createRoundedFrame(parent, size, position, bgColor, transparency)
     corner.CornerRadius = UDim.new(0, 16)
     corner.Parent = frame
 
-    -- Add subtle UIStroke glow
     local stroke = Instance.new("UIStroke")
     stroke.Color = Color3.fromRGB(90, 170, 255)
-    stroke.Thickness = 1.5
+    stroke.Thickness = 2
     stroke.Parent = frame
 
     return frame
@@ -187,17 +187,16 @@ end
 function LucentUI.new()
     local self = setmetatable({}, LucentUI)
 
-    local playerGui = game.Players.LocalPlayer:WaitForChild("PlayerGui")
-
+    -- Create ScreenGui
     self.ScreenGui = Instance.new("ScreenGui")
     self.ScreenGui.Name = "LucentUI"
     self.ScreenGui.ResetOnSpawn = false
-    self.ScreenGui.Parent = playerGui
+    self.ScreenGui.Parent = game:GetService("CoreGui")
 
-    -- Smaller main frame for mobile, fixed center, no drag
+    -- Fixed size frame for mobile/executor, centered
     self.MainFrame = createRoundedFrame(self.ScreenGui, UDim2.new(0, 360, 0, 420), UDim2.new(0.5, -180, 0.5, -210), Color3.fromRGB(15, 40, 85), 0.5)
 
-    -- Tabs container on left, smaller width
+    -- Tabs container
     self.TabsContainer = createRoundedFrame(self.MainFrame, UDim2.new(0, 100, 1, -40), UDim2.new(0, 10, 0, 20), Color3.fromRGB(20, 45, 90), 0.8)
 
     local UIStroke = Instance.new("UIStroke")
