@@ -1,290 +1,180 @@
-local UserInputService = game:GetService("UserInputService")
+-- LucentUI.lua
+-- Modern glassmorphic Roblox UI library with tabs, textbox, dropdown, button, animations
+
 local TweenService = game:GetService("TweenService")
-local RunService = game:GetService("RunService")
+local UserInputService = game:GetService("UserInputService")
 
-local Library = {}
-Library.Tabs = {}
+local LucentUI = {}
+LucentUI.__index = LucentUI
 
--- Helper: Create glassmorphic rounded frame with blur effect behind it
-local function createGlassFrame(parent, size, position)
-    local container = Instance.new("Frame")
-    container.Size = size
-    container.Position = position
-    container.BackgroundTransparency = 1
-    container.AnchorPoint = Vector2.new(0, 0)
-    container.Parent = parent
+local function createRoundedFrame(parent, size, position, bgColor, transparency)
+    local frame = Instance.new("Frame")
+    frame.Size = size
+    frame.Position = position or UDim2.new(0,0,0,0)
+    frame.BackgroundColor3 = bgColor or Color3.fromRGB(30, 30, 40)
+    frame.BackgroundTransparency = transparency or 0.3
+    frame.BorderSizePixel = 0
+    frame.Parent = parent
 
-    -- Blur background behind the frame for glass effect
-    local blurBehind = Instance.new("ImageLabel")
-    blurBehind.Size = UDim2.new(1, 40, 1, 40)
-    blurBehind.Position = UDim2.new(0, -20, 0, -20)
-    blurBehind.BackgroundTransparency = 1
-    blurBehind.Image = "rbxassetid://12150868530" -- subtle noise texture for glass
-    blurBehind.ImageColor3 = Color3.fromRGB(255, 255, 255)
-    blurBehind.ImageTransparency = 0.85
-    blurBehind.ScaleType = Enum.ScaleType.Tile
-    blurBehind.TileSize = UDim2.new(0, 30, 0, 30)
-    blurBehind.ZIndex = 1
-    blurBehind.Parent = container
+    local corner = Instance.new("UICorner")
+    corner.CornerRadius = UDim.new(0, 18)
+    corner.Parent = frame
 
-    local blurEffect = Instance.new("BlurEffect")
-    blurEffect.Size = 15
-    blurEffect.Parent = game:GetService("Lighting")
-
-    -- Frame for glass panel
-    local glass = Instance.new("Frame")
-    glass.Size = UDim2.new(1, 0, 1, 0)
-    glass.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
-    glass.BackgroundTransparency = 0.85
-    glass.BorderSizePixel = 0
-    glass.ZIndex = 2
-    glass.Parent = container
-
-    local uicorner = Instance.new("UICorner")
-    uicorner.CornerRadius = UDim.new(0, 20)
-    uicorner.Parent = glass
-
-    -- Soft inner shadow (using UIStroke)
-    local stroke = Instance.new("UIStroke")
-    stroke.Thickness = 2
-    stroke.Color = Color3.fromRGB(255, 255, 255)
-    stroke.Transparency = 0.8
-    stroke.Parent = glass
-
-    return container, glass
+    return frame
 end
 
--- Tween helper for smooth animations
-local function tweenObject(obj, props, duration, style, direction)
-    style = style or Enum.EasingStyle.Quad
-    direction = direction or Enum.EasingDirection.Out
-    local tweenInfo = TweenInfo.new(duration, style, direction)
-    local tween = TweenService:Create(obj, tweenInfo, props)
-    tween:Play()
-    return tween
+local function tween(obj, props, time)
+    time = time or 0.3
+    local tweenInfo = TweenInfo.new(time, Enum.EasingStyle.Quad, Enum.EasingDirection.Out)
+    local tw = TweenService:Create(obj, tweenInfo, props)
+    tw:Play()
+    return tw
 end
 
--- Glow effect helper (outer glow frame)
-local function createGlow(parent, targetFrame)
-    local glow = Instance.new("Frame")
-    glow.Size = targetFrame.Size + UDim2.new(0, 40, 0, 40)
-    glow.Position = targetFrame.Position - UDim2.new(0, 20, 0, 20)
-    glow.BackgroundColor3 = Color3.fromRGB(0, 204, 255)
-    glow.BackgroundTransparency = 0.9
-    glow.ZIndex = targetFrame.ZIndex - 1
-    glow.Parent = parent
-
-    local uicorner = Instance.new("UICorner")
-    uicorner.CornerRadius = UDim.new(1, 0)
-    uicorner.Parent = glow
-
-    -- Pulse tween animation for glow
-    coroutine.wrap(function()
-        while glow and glow.Parent do
-            tweenObject(glow, {BackgroundTransparency = 0.7}, 1.5, Enum.EasingStyle.Sine, Enum.EasingDirection.InOut).Completed:Wait()
-            tweenObject(glow, {BackgroundTransparency = 0.9}, 1.5, Enum.EasingStyle.Sine, Enum.EasingDirection.InOut).Completed:Wait()
-        end
-    end)()
-
-    return glow
-end
-
--- Create glowing button with hover and click animations
-local function createButton(parent, size, position, text)
+local function createButton(parent, text)
     local btn = Instance.new("TextButton")
-    btn.Size = size
-    btn.Position = position
-    btn.BackgroundColor3 = Color3.fromRGB(15, 15, 30)
+    btn.Size = UDim2.new(1, 0, 0, 40)
+    btn.BackgroundColor3 = Color3.fromRGB(10, 10, 30)
     btn.BorderSizePixel = 0
     btn.Text = text
-    btn.TextColor3 = Color3.fromRGB(100, 230, 255)
     btn.Font = Enum.Font.GothamBold
     btn.TextSize = 20
+    btn.TextColor3 = Color3.fromRGB(70, 200, 255)
     btn.AutoButtonColor = false
-    btn.ZIndex = 5
     btn.Parent = parent
 
-    local uicorner = Instance.new("UICorner")
-    uicorner.CornerRadius = UDim.new(0, 14)
-    uicorner.Parent = btn
+    local corner = Instance.new("UICorner")
+    corner.CornerRadius = UDim.new(0, 12)
+    corner.Parent = btn
 
-    local stroke = Instance.new("UIStroke")
-    stroke.Color = Color3.fromRGB(0, 200, 255)
-    stroke.Thickness = 2
-    stroke.Parent = btn
-
-    -- Glow frame inside button for neon effect
-    local glow = Instance.new("Frame")
-    glow.Size = UDim2.new(1, 0, 1, 0)
-    glow.BackgroundColor3 = Color3.fromRGB(0, 255, 255)
-    glow.BackgroundTransparency = 0.9
-    glow.ZIndex = 4
-    glow.Parent = btn
-
-    local glowCorner = Instance.new("UICorner")
-    glowCorner.CornerRadius = UDim.new(0, 14)
-    glowCorner.Parent = glow
-
-    -- Animations
+    -- Hover Animations
     btn.MouseEnter:Connect(function()
-        tweenObject(btn, {BackgroundColor3 = Color3.fromRGB(0, 50, 70)}, 0.3)
-        tweenObject(glow, {BackgroundTransparency = 0.4}, 0.3)
-        tweenObject(btn, {TextColor3 = Color3.fromRGB(0, 255, 255)}, 0.3)
+        tween(btn, {BackgroundColor3 = Color3.fromRGB(20, 60, 100)}, 0.2)
+        tween(btn, {TextColor3 = Color3.fromRGB(150, 255, 255)}, 0.2)
     end)
     btn.MouseLeave:Connect(function()
-        tweenObject(btn, {BackgroundColor3 = Color3.fromRGB(15, 15, 30)}, 0.3)
-        tweenObject(glow, {BackgroundTransparency = 0.9}, 0.3)
-        tweenObject(btn, {TextColor3 = Color3.fromRGB(100, 230, 255)}, 0.3)
-    end)
-    btn.MouseButton1Down:Connect(function()
-        tweenObject(btn, {BackgroundColor3 = Color3.fromRGB(0, 100, 150)}, 0.1)
-    end)
-    btn.MouseButton1Up:Connect(function()
-        tweenObject(btn, {BackgroundColor3 = Color3.fromRGB(0, 50, 70)}, 0.1)
+        tween(btn, {BackgroundColor3 = Color3.fromRGB(10, 10, 30)}, 0.2)
+        tween(btn, {TextColor3 = Color3.fromRGB(70, 200, 255)}, 0.2)
     end)
 
     return btn
 end
 
--- Create modern textbox with animations
 local function createTextbox(parent, placeholder)
-    local container = Instance.new("Frame")
-    container.Size = UDim2.new(0, 280, 0, 44)
-    container.BackgroundColor3 = Color3.fromRGB(25, 25, 40)
-    container.BackgroundTransparency = 0.3
-    container.BorderSizePixel = 0
-    container.ZIndex = 10
-    container.Parent = parent
+    local frame = Instance.new("Frame")
+    frame.Size = UDim2.new(1, 0, 0, 40)
+    frame.BackgroundColor3 = Color3.fromRGB(15, 15, 35)
+    frame.BorderSizePixel = 0
+    frame.Parent = parent
 
-    local uicorner = Instance.new("UICorner")
-    uicorner.CornerRadius = UDim.new(0, 12)
-    uicorner.Parent = container
+    local corner = Instance.new("UICorner")
+    corner.CornerRadius = UDim.new(0, 14)
+    corner.Parent = frame
 
-    local stroke = Instance.new("UIStroke")
-    stroke.Color = Color3.fromRGB(0, 190, 255)
-    stroke.Thickness = 2
-    stroke.Parent = container
+    local box = Instance.new("TextBox")
+    box.Size = UDim2.new(1, -20, 1, -10)
+    box.Position = UDim2.new(0, 10, 0, 5)
+    box.BackgroundTransparency = 1
+    box.PlaceholderText = placeholder or "Enter text..."
+    box.TextColor3 = Color3.fromRGB(180, 230, 255)
+    box.Font = Enum.Font.GothamSemibold
+    box.TextSize = 18
+    box.ClearTextOnFocus = false
+    box.Parent = frame
 
-    local textbox = Instance.new("TextBox")
-    textbox.Size = UDim2.new(1, -20, 1, -10)
-    textbox.Position = UDim2.new(0, 10, 0, 5)
-    textbox.BackgroundTransparency = 1
-    textbox.PlaceholderText = placeholder or "Type here..."
-    textbox.TextColor3 = Color3.fromRGB(190, 240, 255)
-    textbox.Font = Enum.Font.GothamSemibold
-    textbox.TextSize = 20
-    textbox.ClearTextOnFocus = false
-    textbox.ZIndex = 11
-    textbox.Parent = container
-
-    -- Glow on focus
-    textbox.Focused:Connect(function()
-        tweenObject(stroke, {Color = Color3.fromRGB(0, 255, 255)}, 0.4)
+    box.Focused:Connect(function()
+        tween(frame, {BackgroundColor3 = Color3.fromRGB(30, 50, 90)}, 0.3)
     end)
-    textbox.FocusLost:Connect(function(enterPressed)
-        tweenObject(stroke, {Color = Color3.fromRGB(0, 190, 255)}, 0.4)
+    box.FocusLost:Connect(function()
+        tween(frame, {BackgroundColor3 = Color3.fromRGB(15, 15, 35)}, 0.3)
     end)
 
-    return container, textbox
+    return frame, box
 end
 
--- Dropdown with swag animation
-local function createDropdown(parent, options, defaultText)
+local function createDropdown(parent, options, default)
     local dropdown = Instance.new("Frame")
-    dropdown.Size = UDim2.new(0, 200, 0, 38)
+    dropdown.Size = UDim2.new(1, 0, 0, 40)
     dropdown.BackgroundColor3 = Color3.fromRGB(15, 15, 35)
-    dropdown.BackgroundTransparency = 0.1
     dropdown.BorderSizePixel = 0
-    dropdown.ZIndex = 10
     dropdown.Parent = parent
 
-    local uicorner = Instance.new("UICorner")
-    uicorner.CornerRadius = UDim.new(0, 14)
-    uicorner.Parent = dropdown
-
-    local stroke = Instance.new("UIStroke")
-    stroke.Color = Color3.fromRGB(0, 200, 255)
-    stroke.Thickness = 2
-    stroke.Parent = dropdown
+    local corner = Instance.new("UICorner")
+    corner.CornerRadius = UDim.new(0, 14)
+    corner.Parent = dropdown
 
     local label = Instance.new("TextLabel")
-    label.Size = UDim2.new(1, -40, 1, 0)
-    label.Position = UDim2.new(0, 20, 0, 0)
+    label.Size = UDim2.new(1, -30, 1, 0)
+    label.Position = UDim2.new(0, 10, 0, 0)
     label.BackgroundTransparency = 1
-    label.Text = defaultText or "Select an option"
+    label.Text = default or "Select..."
     label.TextColor3 = Color3.fromRGB(180, 230, 255)
     label.Font = Enum.Font.GothamBold
     label.TextSize = 18
     label.TextXAlignment = Enum.TextXAlignment.Left
-    label.ZIndex = 11
     label.Parent = dropdown
 
     local arrow = Instance.new("TextLabel")
-    arrow.Text = "▼"
     arrow.Size = UDim2.new(0, 20, 1, 0)
-    arrow.Position = UDim2.new(1, -30, 0, 0)
+    arrow.Position = UDim2.new(1, -25, 0, 0)
     arrow.BackgroundTransparency = 1
-    arrow.TextColor3 = Color3.fromRGB(100, 230, 255)
+    arrow.Text = "▼"
+    arrow.TextColor3 = Color3.fromRGB(100, 200, 255)
     arrow.Font = Enum.Font.GothamBold
     arrow.TextSize = 20
-    arrow.ZIndex = 11
     arrow.Parent = dropdown
 
-    local dropdownList = Instance.new("ScrollingFrame")
-    dropdownList.Size = UDim2.new(1, 0, 0, 0)
-    dropdownList.Position = UDim2.new(0, 0, 1, 5)
-    dropdownList.BackgroundColor3 = Color3.fromRGB(10, 10, 20)
-    dropdownList.BorderSizePixel = 0
-    dropdownList.CanvasSize = UDim2.new(0, 0, 0, 0)
-    dropdownList.ScrollBarThickness = 5
-    dropdownList.Visible = false
-    dropdownList.ZIndex = 11
-    dropdownList.Parent = dropdown
+    local list = Instance.new("ScrollingFrame")
+    list.Size = UDim2.new(1, 0, 0, 0)
+    list.Position = UDim2.new(0, 0, 1, 5)
+    list.BackgroundColor3 = Color3.fromRGB(20, 20, 40)
+    list.BorderSizePixel = 0
+    list.Visible = false
+    list.ScrollBarThickness = 6
+    list.Parent = dropdown
 
     local listCorner = Instance.new("UICorner")
-    listCorner.CornerRadius = UDim.new(0, 12)
-    listCorner.Parent = dropdownList
+    listCorner.CornerRadius = UDim.new(0, 14)
+    listCorner.Parent = list
 
-    -- Populate dropdown options
     for i, option in ipairs(options) do
-        local optionBtn = Instance.new("TextButton")
-        optionBtn.Size = UDim2.new(1, -20, 0, 32)
-        optionBtn.Position = UDim2.new(0, 10, 0, (i - 1) * 36)
-        optionBtn.BackgroundColor3 = Color3.fromRGB(20, 20, 40)
-        optionBtn.BorderSizePixel = 0
-        optionBtn.TextColor3 = Color3.fromRGB(180, 230, 255)
-        optionBtn.Font = Enum.Font.GothamSemibold
-        optionBtn.TextSize = 18
-        optionBtn.Text = option
-        optionBtn.ZIndex = 12
-        optionBtn.Parent = dropdownList
+        local btn = Instance.new("TextButton")
+        btn.Size = UDim2.new(1, -20, 0, 30)
+        btn.Position = UDim2.new(0, 10, 0, (i-1)*35)
+        btn.BackgroundColor3 = Color3.fromRGB(30, 30, 60)
+        btn.BorderSizePixel = 0
+        btn.Text = option
+        btn.TextColor3 = Color3.fromRGB(180, 230, 255)
+        btn.Font = Enum.Font.GothamSemibold
+        btn.TextSize = 16
+        btn.Parent = list
 
-        local optionCorner = Instance.new("UICorner")
-        optionCorner.CornerRadius = UDim.new(0, 10)
-        optionCorner.Parent = optionBtn
+        local btnCorner = Instance.new("UICorner")
+        btnCorner.CornerRadius = UDim.new(0, 10)
+        btnCorner.Parent = btn
 
-        optionBtn.MouseEnter:Connect(function()
-            tweenObject(optionBtn, {BackgroundColor3 = Color3.fromRGB(0, 150, 200)}, 0.2)
+        btn.MouseEnter:Connect(function()
+            tween(btn, {BackgroundColor3 = Color3.fromRGB(60, 90, 130)}, 0.2)
         end)
-        optionBtn.MouseLeave:Connect(function()
-            tweenObject(optionBtn, {BackgroundColor3 = Color3.fromRGB(20, 20, 40)}, 0.2)
+        btn.MouseLeave:Connect(function()
+            tween(btn, {BackgroundColor3 = Color3.fromRGB(30, 30, 60)}, 0.2)
         end)
 
-        optionBtn.MouseButton1Click:Connect(function()
-            label.Text = option
-            dropdownList.Visible = false
+        btn.MouseButton1Click:Connect(function()
+            label.Text = btn.Text
+            list.Visible = false
         end)
     end
 
-    dropdownList.CanvasSize = UDim2.new(0, 0, 0, #options * 36)
+    list.CanvasSize = UDim2.new(0, 0, 0, #options * 35)
 
     dropdown.InputBegan:Connect(function(input)
         if input.UserInputType == Enum.UserInputType.MouseButton1 then
-            dropdownList.Visible = not dropdownList.Visible
-            if dropdownList.Visible then
-                tweenObject(dropdownList, {Size = UDim2.new(1, 0, 0, math.min(#options * 36, 180))}, 0.3)
+            list.Visible = not list.Visible
+            if list.Visible then
+                tween(list, {Size = UDim2.new(1, 0, 0, math.min(#options * 35, 140))}, 0.3)
             else
-                tweenObject(dropdownList, {Size = UDim2.new(1, 0, 0, 0)}, 0.3)
+                tween(list, {Size = UDim2.new(1, 0, 0, 0)}, 0.3)
             end
         end
     end)
@@ -292,131 +182,122 @@ local function createDropdown(parent, options, defaultText)
     return dropdown, label
 end
 
--- Main UI Creation
-function Library:CreateUI()
-    local screenGui = Instance.new("ScreenGui")
-    screenGui.Name = "SwagUI"
-    screenGui.ResetOnSpawn = false
-    screenGui.Parent = game.Players.LocalPlayer:WaitForChild("PlayerGui")
+function LucentUI.new()
+    local self = setmetatable({}, LucentUI)
 
-    -- Main glass frame container + glass panel
-    local container, mainFrame = createGlassFrame(screenGui, UDim2.new(0, 600, 0, 450), UDim2.new(0.5, -300, 0.5, -225))
+    local playerGui = game.Players.LocalPlayer:WaitForChild("PlayerGui")
 
-    -- Neon glow behind main frame
-    createGlow(screenGui, container)
+    self.ScreenGui = Instance.new("ScreenGui")
+    self.ScreenGui.Name = "LucentUI"
+    self.ScreenGui.ResetOnSpawn = false
+    self.ScreenGui.Parent = playerGui
 
-    -- Left Tabs container with blur and shadow
-    local tabsContainer = Instance.new("Frame")
-    tabsContainer.Size = UDim2.new(0, 140, 1, 0)
-    tabsContainer.BackgroundColor3 = Color3.fromRGB(20, 20, 40)
-    tabsContainer.BackgroundTransparency = 0.1
-    tabsContainer.Position = UDim2.new(0, 0, 0, 0)
-    tabsContainer.ZIndex = 10
-    tabsContainer.Parent = container
+    self.MainFrame = createRoundedFrame(self.ScreenGui, UDim2.new(0, 600, 0, 450), UDim2.new(0.5, -300, 0.5, -225), Color3.fromRGB(12, 12, 22), 0.5)
 
-    local uicornerTabs = Instance.new("UICorner")
-    uicornerTabs.CornerRadius = UDim.new(0, 20)
-    uicornerTabs.Parent = tabsContainer
+    self.TabsContainer = createRoundedFrame(self.MainFrame, UDim2.new(0, 140, 1, -40), UDim2.new(0, 10, 0, 20), Color3.fromRGB(20, 20, 40), 0.8)
 
-    local strokeTabs = Instance.new("UIStroke")
-    strokeTabs.Color = Color3.fromRGB(0, 200, 255)
-    strokeTabs.Thickness = 2
-    strokeTabs.Parent = tabsContainer
+    local UIStroke = Instance.new("UIStroke")
+    UIStroke.Parent = self.TabsContainer
+    UIStroke.Color = Color3.fromRGB(60, 150, 255)
+    UIStroke.Thickness = 2
 
-    local tabsListLayout = Instance.new("UIListLayout")
-    tabsListLayout.SortOrder = Enum.SortOrder.LayoutOrder
-    tabsListLayout.Padding = UDim.new(0, 16)
-    tabsListLayout.HorizontalAlignment = Enum.HorizontalAlignment.Center
-    tabsListLayout.Parent = tabsContainer
+    self.ContentContainer = Instance.new("Frame")
+    self.ContentContainer.Size = UDim2.new(1, -160, 1, -40)
+    self.ContentContainer.Position = UDim2.new(0, 160, 0, 20)
+    self.ContentContainer.BackgroundTransparency = 1
+    self.ContentContainer.Parent = self.MainFrame
 
-    -- Right content container
-    local contentContainer = Instance.new("Frame")
-    contentContainer.Size = UDim2.new(1, -160, 1, -40)
-    contentContainer.Position = UDim2.new(0, 160, 0, 20)
-    contentContainer.BackgroundTransparency = 1
-    contentContainer.ZIndex = 15
-    contentContainer.Parent = container
+    self.Tabs = {}
+    self.TabButtons = {}
 
-    local tabButtons = {}
-
-    -- Add Tab function with animated switching
-    function Library:AddTab(tabName)
-        local tabButton = createButton(tabsContainer, UDim2.new(1, -40, 0, 44), UDim2.new(0, 0, 0, (#tabButtons) * 54 + 20), tabName)
-        tabButton.TextColor3 = Color3.fromRGB(0, 190, 255)
-        tabButton.BackgroundColor3 = Color3.fromRGB(10, 10, 30)
-
-        local tabContent = Instance.new("Frame")
-        tabContent.Size = UDim2.new(1, 0, 1, 0)
-        tabContent.BackgroundTransparency = 1
-        tabContent.Visible = false
-        tabContent.ZIndex = 20
-        tabContent.Parent = contentContainer
-
-        -- Animated tab show/hide
-        local function showTab()
-            for _, btn in pairs(tabButtons) do
-                tweenObject(btn, {BackgroundColor3 = Color3.fromRGB(10, 10, 30)}, 0.3)
-                btn.TextColor3 = Color3.fromRGB(0, 190, 255)
-            end
-            for _, tab in pairs(Library.Tabs) do
-                if tab.Content ~= tabContent then
-                    tweenObject(tab.Content, {BackgroundTransparency = 1}, 0.3)
-                    tab.Content.Visible = false
-                end
-            end
-
-            tabContent.Visible = true
-            tweenObject(tabContent, {BackgroundTransparency = 0}, 0.4)
-            tweenObject(tabButton, {BackgroundColor3 = Color3.fromRGB(0, 190, 255)}, 0.3)
-            tabButton.TextColor3 = Color3.fromRGB(25, 25, 35)
-        end
-
-        tabButton.MouseButton1Click:Connect(showTab)
-
-        local tabData = {
-            Button = tabButton,
-            Content = tabContent,
-            Elements = {}
-        }
-        table.insert(tabButtons, tabButton)
-        table.insert(Library.Tabs, tabData)
-
-        -- Auto-select first tab
-        if #Library.Tabs == 1 then
-            showTab()
-        end
-
-        -- Add Textbox with enter callback
-        function tabData:AddTextbox(placeholder, onEnter)
-            local container, textbox = createTextbox(self.Content, placeholder)
-            container.Position = UDim2.new(0, 20, 0, (#self.Elements) * 60 + 20)
-            container.Parent = self.Content
-
-            textbox.FocusLost:Connect(function(enterPressed)
-                if enterPressed and onEnter then
-                    onEnter(textbox.Text)
-                    textbox.Text = ""
-                end
-            end)
-
-            table.insert(self.Elements, container)
-            return textbox
-        end
-
-        -- Add Dropdown with options
-        function tabData:AddDropdown(options, defaultText)
-            local dropdown, label = createDropdown(self.Content, options, defaultText)
-            dropdown.Position = UDim2.new(0, 20, 0, (#self.Elements) * 60 + 20)
-            dropdown.Parent = self.Content
-
-            table.insert(self.Elements, dropdown)
-            return dropdown, label
-        end
-
-        return tabData
-    end
-
-    return Library
+    return self
 end
 
-return Library
+function LucentUI:AddTab(name)
+    local tabButton = createButton(self.TabsContainer, name)
+    tabButton.Position = UDim2.new(0, 0, 0, (#self.TabButtons)*54 + 10)
+    tabButton.Parent = self.TabsContainer
+
+    local contentFrame = Instance.new("Frame")
+    contentFrame.Size = UDim2.new(1, 0, 1, 0)
+    contentFrame.BackgroundTransparency = 1
+    contentFrame.Visible = false
+    contentFrame.Parent = self.ContentContainer
+
+    local function selectTab()
+        for _, btn in pairs(self.TabButtons) do
+            tween(btn, {BackgroundColor3 = Color3.fromRGB(10, 10, 30)}, 0.3)
+            btn.TextColor3 = Color3.fromRGB(70, 200, 255)
+        end
+
+        for _, tab in pairs(self.Tabs) do
+            tab.Content.Visible = false
+        end
+
+        tween(tabButton, {BackgroundColor3 = Color3.fromRGB(30, 70, 120)}, 0.3)
+        tabButton.TextColor3 = Color3.fromRGB(220, 255, 255)
+
+        contentFrame.Visible = true
+    end
+
+    tabButton.MouseButton1Click:Connect(selectTab)
+
+    table.insert(self.TabButtons, tabButton)
+    table.insert(self.Tabs, {Button = tabButton, Content = contentFrame, Elements = {}})
+
+    if #self.Tabs == 1 then
+        selectTab()
+    end
+
+    local tabData = self.Tabs[#self.Tabs]
+
+    function tabData:AddTextbox(placeholder, callback)
+        local container, textbox = createTextbox(tabData.Content, placeholder)
+        container.Position = UDim2.new(0, 10, 0, (#tabData.Elements)*60 + 10)
+        container.Parent = tabData.Content
+
+        textbox.FocusLost:Connect(function(enterPressed)
+            if enterPressed and callback then
+                callback(textbox.Text)
+                textbox.Text = ""
+            end
+        end)
+
+        table.insert(tabData.Elements, container)
+        return textbox
+    end
+
+    function tabData:AddDropdown(options, defaultText)
+        local dropdown, label = createDropdown(tabData.Content, options, defaultText)
+        dropdown.Position = UDim2.new(0, 10, 0, (#tabData.Elements)*60 + 10)
+        dropdown.Parent = tabData.Content
+
+        table.insert(tabData.Elements, dropdown)
+        return dropdown, label
+    end
+
+    function tabData:AddButton(text, callback)
+        local btn = createButton(tabData.Content, text)
+        btn.Position = UDim2.new(0, 10, 0, (#tabData.Elements)*60 + 10)
+        btn.Parent = tabData.Content
+
+        btn.MouseButton1Click:Connect(function()
+            if callback then callback() end
+        end)
+
+        table.insert(tabData.Elements, btn)
+        return btn
+    end
+
+    return tabData
+end
+
+function LucentUI:Show()
+    self.ScreenGui.Enabled = true
+end
+
+function LucentUI:Hide()
+    self.ScreenGui.Enabled = false
+end
+
+return LucentUI
