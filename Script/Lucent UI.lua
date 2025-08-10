@@ -69,7 +69,7 @@ end
 -- Library initialization
 function Lucent.new()
     local self = setmetatable({}, Lucent)
-    self.windows = {}
+    self.windows = {} -- Initialize windows table
     
     local screenGui = Instance.new("ScreenGui")
     screenGui.Name = "LucentUI"
@@ -82,6 +82,10 @@ end
 
 -- Window creation
 function Lucent:CreateWindow(title, description, iconId)
+    if not self.windows then
+        self.windows = {} -- Ensure windows table exists
+    end
+    
     local window = {
         tabs = {},
         container = nil,
