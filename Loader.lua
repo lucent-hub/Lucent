@@ -19,15 +19,28 @@ local Config = {
     ValidKeys = {
         "STXR2020"  -- The only valid key
     },
-    KeyFile = "LucentKey.txt",
     SupportedGames = {
-        [12355337193] = { -- Murderers VS Sheriffs DUELS
-            Name = "Murderers VS Sheriffs DUELS",
-            Exec = function()
-                loadstring(game:HttpGet("https://raw.githubusercontent.com/lucent-hub/Lucent/refs/heads/main/Script/Murder%20VS%20Sheriff/Code.lua"))()
-            end
-        },
+    [12355337193] = { -- Murderers VS Sheriffs DUELS
+        Name = "Murderers VS Sheriffs DUELS",
+        Exec = function()
+            loadstring(game:HttpGet("https://raw.githubusercontent.com/lucent-hub/Lucent/refs/heads/main/Script/Murder%20VS%20Sheriff/Code.lua"))()
+        end
     },
+
+    [2788229376] = { -- Example Game 1
+        Name = "DaHood (beta vro🥀🥀)",
+        Exec = function()
+            loadstring(game:HttpGet("https://raw.githubusercontent.com/lucent-hub/Lucent/refs/heads/main/Script/Da%20hood/Code.lua"))()
+        end
+    },
+
+    [1357913579] = { -- Example Game 2
+        Name = "Example Game 2",
+        Exec = function()
+            loadstring(game:HttpGet("https://example.com/ExampleGame2.lua"))()
+        end
+    },
+}
     ParticleDensity = 50,
     FadeDelay = 5,
     UniversalHubID = 1234567890
