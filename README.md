@@ -4,7 +4,7 @@
 
 | Game Name          | Description                       | Script Features                    | Status   |
 |--------------------|-----------------------------------|------------------------------------|----------|
-| Murder vs Sheriff  |____     [██████████] 100%         | Hitbox enhancement, ESP, Auto aim  | Stable   |
+| Murder vs Sheriff  |____     [██████████] 100%         | Hitbox enhancement,               | Stable   |
 | 99 Nights in the Forest |    [█---------] 15%          |  coming soon...                      | almost   |
 | dahood             |         [█████----] 60%           | Fly, Noclip, Aimlock, Telepo       | beta     |
 | ???                |         [----------] 0%           | coming soon...                     | beta     |
