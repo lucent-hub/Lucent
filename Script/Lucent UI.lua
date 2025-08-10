@@ -6,6 +6,7 @@ Lucent.__index = Lucent
 local TweenService = game:GetService("TweenService")
 local UserInputService = game:GetService("UserInputService")
 local RunService = game:GetService("RunService")
+local Players = game:GetService("Players")
 
 -- Utility functions
 local function dragify(frame)
@@ -56,7 +57,16 @@ local function createCorner(parent, radius)
     return corner
 end
 
--- Library functions
+local function createStroke(parent)
+    local stroke = Instance.new("UIStroke")
+    stroke.ApplyStrokeMode = Enum.ApplyStrokeMode.Border
+    stroke.Color = Color3.fromRGB(60, 60, 60)
+    stroke.Thickness = 1
+    stroke.Parent = parent
+    return stroke
+end
+
+-- Library initialization
 function Lucent.new()
     local self = setmetatable({}, Lucent)
     self.windows = {}
@@ -64,16 +74,18 @@ function Lucent.new()
     local screenGui = Instance.new("ScreenGui")
     screenGui.Name = "LucentUI"
     screenGui.ResetOnSpawn = false
-    screenGui.Parent = game:GetService("Players").LocalPlayer:WaitForChild("PlayerGui")
+    screenGui.Parent = Players.LocalPlayer:WaitForChild("PlayerGui")
     
     self.screenGui = screenGui
     return self
 end
 
+-- Window creation
 function Lucent:CreateWindow(title, description, iconId)
     local window = {
         tabs = {},
-        container = nil
+        container = nil,
+        mainFrame = nil
     }
     
     -- Main window frame
@@ -87,6 +99,9 @@ function Lucent:CreateWindow(title, description, iconId)
     main.Parent = self.screenGui
     
     createCorner(main)
+    createStroke(main)
+    
+    window.mainFrame = main
     
     -- Window icon
     if iconId then
@@ -141,12 +156,13 @@ function Lucent:CreateWindow(title, description, iconId)
     container.Parent = main
     
     createCorner(container, 6)
+    createStroke(container)
     
     window.container = container
     
     -- Toggle logic
     local expanded = false
-    local expandedSize = UDim2.new(0, 200, 0, 130) -- Will be updated when elements are added
+    local expandedSize = UDim2.new(0, 200, 0, 130)
     local collapsedSize = UDim2.new(0, 200, 0, 54)
     
     toggleArrow.MouseButton1Click:Connect(function()
@@ -176,7 +192,8 @@ function Lucent:CreateWindow(title, description, iconId)
         local tab = {
             name = name,
             elements = {},
-            container = nil
+            container = nil,
+            button = nil
         }
         
         -- Tab button
@@ -191,6 +208,9 @@ function Lucent:CreateWindow(title, description, iconId)
         tabButton.Parent = container
         
         createCorner(tabButton, 5)
+        createStroke(tabButton)
+        
+        tab.button = tabButton
         
         -- Tab container (will be shown/hidden)
         local tabContainer = Instance.new("Frame")
@@ -239,6 +259,7 @@ function Lucent:CreateWindow(title, description, iconId)
             button.Parent = tabContainer
             
             createCorner(button, 5)
+            createStroke(button)
             
             button.MouseButton1Click:Connect(function()
                 if callback then callback() end
@@ -259,6 +280,7 @@ function Lucent:CreateWindow(title, description, iconId)
             toggle.Parent = tabContainer
             
             createCorner(toggle, 5)
+            createStroke(toggle)
             
             local state = default or false
             
@@ -346,6 +368,7 @@ function Lucent:CreateWindow(title, description, iconId)
             dropdownFrame.Parent = tabContainer
             
             createCorner(dropdownFrame, 5)
+            createStroke(dropdownFrame)
             
             local label = Instance.new("TextLabel")
             label.Size = UDim2.new(0.7, 0, 1, 0)
@@ -382,6 +405,7 @@ function Lucent:CreateWindow(title, description, iconId)
             dropdownOptions.Parent = dropdownFrame
             
             createCorner(dropdownOptions, 5)
+            createStroke(dropdownOptions)
             
             local optionsLayout = Instance.new("UIListLayout")
             optionsLayout.Parent = dropdownOptions
@@ -397,6 +421,7 @@ function Lucent:CreateWindow(title, description, iconId)
                 optionButton.Parent = dropdownOptions
                 
                 createCorner(optionButton, 5)
+                createStroke(optionButton)
                 
                 optionButton.MouseButton1Click:Connect(function()
                     valueLabel.Text = option
@@ -445,6 +470,7 @@ function Lucent:CreateWindow(title, description, iconId)
             textBox.Parent = tabContainer
             
             createCorner(textBox, 5)
+            createStroke(textBox)
             
             textBox.FocusLost:Connect(function()
                 if callback then callback(textBox.Text) end
