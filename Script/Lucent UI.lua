@@ -1,8 +1,9 @@
--- LucentUI.lua
--- Modern glassmorphic Roblox UI library with tabs, textbox, dropdown, button, animations
+-- Lucent UI recreated for executor-style usage
+-- Paste this whole code in a script file or use the HttpGet to load it
 
 local TweenService = game:GetService("TweenService")
 local UserInputService = game:GetService("UserInputService")
+local RunService = game:GetService("RunService")
 
 local LucentUI = {}
 LucentUI.__index = LucentUI
@@ -17,7 +18,7 @@ local function createRoundedFrame(parent, size, position, bgColor, transparency)
     frame.Parent = parent
 
     local corner = Instance.new("UICorner")
-    corner.CornerRadius = UDim.new(0, 18)
+    corner.CornerRadius = UDim.new(0, 20)
     corner.Parent = frame
 
     return frame
@@ -25,7 +26,7 @@ end
 
 local function tween(obj, props, time)
     time = time or 0.3
-    local tweenInfo = TweenInfo.new(time, Enum.EasingStyle.Quad, Enum.EasingDirection.Out)
+    local tweenInfo = TweenInfo.new(time, Enum.EasingStyle.Quart, Enum.EasingDirection.Out)
     local tw = TweenService:Create(obj, tweenInfo, props)
     tw:Play()
     return tw
@@ -34,7 +35,7 @@ end
 local function createButton(parent, text)
     local btn = Instance.new("TextButton")
     btn.Size = UDim2.new(1, 0, 0, 40)
-    btn.BackgroundColor3 = Color3.fromRGB(10, 10, 30)
+    btn.BackgroundColor3 = Color3.fromRGB(12, 12, 25)
     btn.BorderSizePixel = 0
     btn.Text = text
     btn.Font = Enum.Font.GothamBold
@@ -44,16 +45,15 @@ local function createButton(parent, text)
     btn.Parent = parent
 
     local corner = Instance.new("UICorner")
-    corner.CornerRadius = UDim.new(0, 12)
+    corner.CornerRadius = UDim.new(0, 16)
     corner.Parent = btn
 
-    -- Hover Animations
     btn.MouseEnter:Connect(function()
-        tween(btn, {BackgroundColor3 = Color3.fromRGB(20, 60, 100)}, 0.2)
-        tween(btn, {TextColor3 = Color3.fromRGB(150, 255, 255)}, 0.2)
+        tween(btn, {BackgroundColor3 = Color3.fromRGB(25, 60, 110)}, 0.2)
+        tween(btn, {TextColor3 = Color3.fromRGB(200, 255, 255)}, 0.2)
     end)
     btn.MouseLeave:Connect(function()
-        tween(btn, {BackgroundColor3 = Color3.fromRGB(10, 10, 30)}, 0.2)
+        tween(btn, {BackgroundColor3 = Color3.fromRGB(12, 12, 25)}, 0.2)
         tween(btn, {TextColor3 = Color3.fromRGB(70, 200, 255)}, 0.2)
     end)
 
@@ -63,7 +63,7 @@ end
 local function createTextbox(parent, placeholder)
     local frame = Instance.new("Frame")
     frame.Size = UDim2.new(1, 0, 0, 40)
-    frame.BackgroundColor3 = Color3.fromRGB(15, 15, 35)
+    frame.BackgroundColor3 = Color3.fromRGB(15, 15, 30)
     frame.BorderSizePixel = 0
     frame.Parent = parent
 
@@ -86,7 +86,7 @@ local function createTextbox(parent, placeholder)
         tween(frame, {BackgroundColor3 = Color3.fromRGB(30, 50, 90)}, 0.3)
     end)
     box.FocusLost:Connect(function()
-        tween(frame, {BackgroundColor3 = Color3.fromRGB(15, 15, 35)}, 0.3)
+        tween(frame, {BackgroundColor3 = Color3.fromRGB(15, 15, 30)}, 0.3)
     end)
 
     return frame, box
@@ -226,7 +226,7 @@ function LucentUI:AddTab(name)
 
     local function selectTab()
         for _, btn in pairs(self.TabButtons) do
-            tween(btn, {BackgroundColor3 = Color3.fromRGB(10, 10, 30)}, 0.3)
+            tween(btn, {BackgroundColor3 = Color3.fromRGB(12, 12, 25)}, 0.3)
             btn.TextColor3 = Color3.fromRGB(70, 200, 255)
         end
 
@@ -234,7 +234,7 @@ function LucentUI:AddTab(name)
             tab.Content.Visible = false
         end
 
-        tween(tabButton, {BackgroundColor3 = Color3.fromRGB(30, 70, 120)}, 0.3)
+        tween(tabButton, {BackgroundColor3 = Color3.fromRGB(25, 60, 110)}, 0.3)
         tabButton.TextColor3 = Color3.fromRGB(220, 255, 255)
 
         contentFrame.Visible = true
