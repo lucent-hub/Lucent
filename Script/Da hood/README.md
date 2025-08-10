@@ -4,8 +4,33 @@
 
 ## Features
 
-- Only hitbox  
-- Customize hitbox
+Invisible Limbs (Like FE korblox FE headless)
+
+- Walk On air
+
+- Spinbot (constant spinning)
+
+- Tiny / Giant Player Morph
+
+- Floating / No Animation Walk
+
+- Rainbow Outfit
+
+- Camera Shake Toggle
+
+- Full Bright Mode
+
+- Auto AFK Animation
+
+- Chat Spam Presets
+
+- Fake Godmode (visual)
+
+- Ragdoll
+
+- Ghost Walk
+
+- Always T-Pose
 
 ---
 
