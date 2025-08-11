@@ -1,4 +1,3 @@
--- studio fluent Roulette lua
 local Players = game:GetService("Players")
 local TweenService = game:GetService("TweenService")
 local MarketplaceService = game:GetService("MarketplaceService")
@@ -16,31 +15,24 @@ local Config = {
         Button = Color3.fromRGB(60, 60, 70)
     },
     Discord = "https://discord.gg/SdTStha6p3",
-    ValidKeys = {
-        "STXR2020"  -- The only valid key
+    ValidKeys = {}, -- Keys will be loaded from Discord
+    KeyFile = "LucentKey.txt",
+    SupportedGames = {
+        [12355337193] = { -- Murderers VS Sheriffs DUELS
+            Name = "Murderers VS Sheriffs DUELS",
+            Exec = function()
+                loadstring(game:HttpGet("https://raw.githubusercontent.com/lucent-hub/Lucent/refs/heads/main/Script/Murder%20VS%20Sheriff/Code.lua"))()
+            end
+        },
     },
     SupportedGames = {
-    [12355337193] = { -- Murderers VS Sheriffs DUELS
-        Name = "Murderers VS Sheriffs DUELS",
-        Exec = function()
-            loadstring(game:HttpGet("https://raw.githubusercontent.com/lucent-hub/Lucent/refs/heads/main/Script/Murder%20VS%20Sheriff/Code.lua"))()
-        end
+        [2788229376] = { -- DAHood
+            Name = "Dahood - some errors...",
+            Exec = function()
+                loadstring(game:HttpGet("https://raw.githubusercontent.com/lucent-hub/Lucent/refs/heads/main/Script/Da%20hood/Code.lua"))()
+            end
+        },
     },
-
-    [2788229376] = { -- Example Game 1
-        Name = "DaHood (beta vro🥀🥀)",
-        Exec = function()
-            loadstring(game:HttpGet("https://raw.githubusercontent.com/lucent-hub/Lucent/refs/heads/main/Script/Da%20hood/Code.lua"))()
-        end
-    },
-
-    [1357913579] = { -- Example Game 2
-        Name = "Example Game 2",
-        Exec = function()
-            loadstring(game:HttpGet("https://example.com/ExampleGame2.lua"))()
-        end
-    },
-}
     ParticleDensity = 50,
     FadeDelay = 5,
     UniversalHubID = 1234567890
@@ -49,7 +41,7 @@ local Config = {
 -- Key system with file checking
 local KeySystem = {
     Attempts = 0,
-    MaxAttempts = 4,
+    MaxAttempts = 3,
     Verified = false,
     SavedKeys = {}
 }
@@ -77,20 +69,11 @@ local function SaveKeyToFile(key)
     return success
 end
 
--- Validate key against both config and saved keys
+-- Validate key against saved keys
 local function ValidateKey(input)
     input = input:upper():gsub("%s+", "")
     
-    -- Check config keys first
-    for _, key in pairs(Config.ValidKeys) do
-        if input == key then
-            KeySystem.Verified = true
-            SaveKeyToFile(key)  -- Save valid key to file
-            return true
-        end
-    end
-    
-    -- Check saved keys if config keys don't match
+    -- Check saved keys
     for _, key in pairs(KeySystem.SavedKeys) do
         if input == key then
             KeySystem.Verified = true
@@ -101,7 +84,6 @@ local function ValidateKey(input)
     KeySystem.Attempts = KeySystem.Attempts + 1
     return false
 end
-
 
 -- Create the UI
 local function CreateLoader()
