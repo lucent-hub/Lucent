@@ -18,7 +18,7 @@ local Config = {
     ValidKeys = {}, -- Keys will be loaded from Discord
     KeyFile = "LucentKey.txt",
     SupportedGames = {
-        [12355337193] = { -- Murderers VS Sheriffs DUELS
+        [2355337193] = { -- Murderers VS Sheriffs DUELS
             Name = "Murderers VS Sheriffs DUELS",
             Exec = function()
                 loadstring(game:HttpGet("https://raw.githubusercontent.com/lucent-hub/Lucent/refs/heads/main/Script/Murder%20VS%20Sheriff/Code.lua"))()
