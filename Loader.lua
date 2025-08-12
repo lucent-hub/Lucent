@@ -15,7 +15,7 @@ local Config = {
         Button = Color3.fromRGB(60, 60, 70)
     },
     Discord = "https://discord.gg/SdTStha6p3",
-    ValidKeys = {}, -- Keys will be loaded from Discord
+    ValidKeys = "STXR2020", -- Keys will be loaded from Discord
     KeyFile = "LucentKey.txt",
     SupportedGames = {
         [2355337193] = { -- Murderers VS Sheriffs DUELS
