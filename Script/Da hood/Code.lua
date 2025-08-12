@@ -1,7 +1,5 @@
 --[[
-	WARNING: Heads up! This script has not been verified by ScriptBlox. Use at your own risk!
-	Lucent Hub - Formerly Dimag X
-	Credits: dawn#9990 (original creator), Dimag16
+	Credits: dawn#9990 (original helper W), Dimag16
 ]]
 
 local OrionLib = loadstring(game:HttpGet(('https://raw.githubusercontent.com/Seven7-lua/Roblox/refs/heads/main/Librarys/Orion/Orion.lua')))()
