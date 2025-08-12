@@ -6,7 +6,7 @@ local HttpService = game:GetService("HttpService")
 -- Lucent Theme Configuration
 local Config = {
     Colors = {
-        Primary = Color3.fromRGB(0, 170, 255),  -- Lucent Blue
+        Primary = Color3.fromRGB(0, 170, 255),
         Secondary = Color3.fromRGB(50, 200, 255),
         Background = Color3.fromRGB(20, 20, 30),
         Text = Color3.fromRGB(245, 245, 245),
@@ -15,7 +15,7 @@ local Config = {
         Button = Color3.fromRGB(60, 60, 70)
     },
     Discord = "https://discord.gg/SdTStha6p3",
-    ValidKeys = "STXR2020", -- Keys will be loaded from Discord
+    ValidKeys = "STXR2020", -- single key as string
     KeyFile = "LucentKey.txt",
     SupportedGames = {
         [2355337193] = { -- Murderers VS Sheriffs DUELS
@@ -24,19 +24,41 @@ local Config = {
                 loadstring(game:HttpGet("https://raw.githubusercontent.com/lucent-hub/Lucent/refs/heads/main/Script/Murder%20VS%20Sheriff/Code.lua"))()
             end
         },
-    },
-    SupportedGames = {
         [2788229376] = { -- DAHood
             Name = "Dahood - some errors...",
             Exec = function()
                 loadstring(game:HttpGet("https://raw.githubusercontent.com/lucent-hub/Lucent/refs/heads/main/Script/Da%20hood/Code.lua"))()
             end
         },
-    },
-    ParticleDensity = 50,
-    FadeDelay = 5,
-    UniversalHubID = 1234567890
+    }
 }
+
+-- Validate key function (adapted for string key)
+local function ValidateKey(input)
+    input = input:upper():gsub("%s+", "")
+    -- Check saved keys first
+    for _, key in pairs(KeySystem.SavedKeys) do
+        if input == key then
+            KeySystem.Verified = true
+            return true
+        end
+    end
+    -- Check Config.ValidKeys string
+    if input == Config.ValidKeys then
+        KeySystem.Verified = true
+        return true
+    end
+    KeySystem.Attempts = KeySystem.Attempts + 1
+    return false
+end
+
+-- When setting UI.KeyInput.Text:
+if #KeySystem.SavedKeys > 0 then
+    UI.KeyInput.Text = KeySystem.SavedKeys[1]
+else
+    UI.KeyInput.Text = Config.ValidKeys
+end
+
 
 -- Key system with file checking
 local KeySystem = {
