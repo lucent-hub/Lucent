@@ -5,9 +5,9 @@
 | Game Name          | Description                       | Script Features                    | Status   |
 |--------------------|-----------------------------------|------------------------------------|----------|
 | Murder vs Sheriff  |____     [██████████] 100%         | Hitbox enhancement,               | Stable   |
-| 99 Nights in the Forest |    [█---------] 15%          |  coming soon...                      | almost   |
+| 99 Nights in the Forest |    [█---------] 15%          |  discontinued...                      | discounted  |
 | dahood             |         [█████----] 60%           | Fly, Noclip, Aimlock, Telepo       | beta     |
-| ???                |         [----------] 0%           | coming soon...                     | beta     |
+| murder mystery     |         [█████████] 100%           | to much...                     | stable     |
 | ???                |         [----------] 0%           | coming soon...                     | beta     |
 
 # Installation
