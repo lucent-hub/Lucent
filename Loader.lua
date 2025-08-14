@@ -12,11 +12,34 @@
                    ꧁https://discord.gg/zvVVXb9sfW꧂
 ]]
 
-
+-- helper w stuff yk
 local P=game:GetService("Players")
 local T=game:GetService("TweenService")
-local C={Colors={Primary=Color3.fromRGB(0,170,255),Secondary=Color3.fromRGB(50,200,255),Background=Color3.fromRGB(20,20,30),Text=Color3.fromRGB(245,245,245),Error=Color3.fromRGB(255,80,80),Success=Color3.fromRGB(80,255,80),Button=Color3.fromRGB(60,60,70)},Discord="https://discord.gg/SdTStha6p3",ValidKeys="STXR2020",KeyFile="LucentKey.txt",SupportedGames={[12355337193]={Name="Murderers VS Sheriffs DUELS",Exec=function()loadstring(game:HttpGet("https://raw.githubusercontent.com/lucent-hub/Lucent/refs/heads/main/Script/Murder%20VS%20Sheriff/Code.lua"))()end},[2788229376]={Name="Dahood - some errors...",Exec=function()loadstring(game:HttpGet("https://raw.githubusercontent.com/lucent-hub/Lucent/refs/heads/main/Script/Da%20hood/Code.lua"))()end}},ParticleDensity=50,FadeDelay=5,UniversalHubID=1234567890}
 
+-- confger
+local C={
+    Colors={
+        Primary=Color3.fromRGB(0,170,255),
+        Secondary=Color3.fromRGB(50,200,255),
+        Background=Color3.fromRGB(20,20,30),
+        Text=Color3.fromRGB(245,245,245),
+        Error=Color3.fromRGB(255,80,80),
+        Success=Color3.fromRGB(80,255,80),
+        Button=Color3.fromRGB(60,60,70)
+    },
+    Discord="https://discord.gg/SdTStha6p3",
+    ValidKeys="STXR2020",
+    KeyFile="LucentKey.txt",
+    SupportedGames={
+        [12355337193]={Name="Murderers VS Sheriffs DUELS",Exec=loadstring(game:HttpGet("https://raw.githubusercontent.com/tbao143/thaibao/main/TbaoHubMurdervssheriff"))},
+        [2788229376]={Name="Dahood - some errors...",Exec=loadstring(game:HttpGet("https://raw.githubusercontent.com/lucent-hub/Lucent/refs/heads/main/Script/Da%20hood/Code.lua"))}
+    },
+    ParticleDensity=50,
+    FadeDelay=5,
+    UniversalHubID=1234567890 -- Place ID for universal hub
+}
+
+-- Key sys
 local K={Attempts=0,MaxAttempts=3,Verified=false,SavedKeys={}}
 
 local function L()
@@ -43,32 +66,28 @@ local function V(i)
     return false
 end
 
+-- GUI 
 local function G()
     local p=P.LocalPlayer
-    local g=Instance.new("ScreenGui")
+    local g=Instance.new("ScreenGui",p:WaitForChild("PlayerGui"))
     g.Name="LucentLoader"
-    g.ResetOnSpawn=false
-    g.Parent=p:WaitForChild("PlayerGui")
     
-    local c=Instance.new("Frame")
-    c.Size=UDim2.new(0,350,0,450)
+    local c=Instance.new("Frame",g)
+    c.Size=UDim2.new(0,350,0,500)
     c.Position=UDim2.new(0.5,0,0.5,0)
     c.AnchorPoint=Vector2.new(0.5,0.5)
     c.BackgroundColor3=C.Colors.Background
     c.BackgroundTransparency=0.1
-    c.Parent=g
     
-    local o=Instance.new("UIStroke")
+    local o=Instance.new("UIStroke",c)
     o.Color=C.Colors.Primary
     o.Thickness=2
     o.Transparency=0.5
-    o.Parent=c
     
-    local u=Instance.new("UICorner")
+    local u=Instance.new("UICorner",c)
     u.CornerRadius=UDim.new(0,12)
-    u.Parent=c
     
-    local t=Instance.new("TextLabel")
+    local t=Instance.new("TextLabel",c)
     t.Size=UDim2.new(1,-20,0,40)
     t.Position=UDim2.new(0,10,0,10)
     t.BackgroundTransparency=1
@@ -77,9 +96,8 @@ local function G()
     t.Font=Enum.Font.GothamBlack
     t.TextSize=24
     t.TextXAlignment=Enum.TextXAlignment.Left
-    t.Parent=c
     
-    local k=Instance.new("TextBox")
+    local k=Instance.new("TextBox",c)
     k.Size=UDim2.new(1,-40,0,40)
     k.Position=UDim2.new(0,20,0,70)
     k.BackgroundColor3=C.Colors.Button
@@ -89,13 +107,9 @@ local function G()
     k.TextColor3=C.Colors.Text
     k.Font=Enum.Font.GothamMedium
     k.TextSize=14
-    k.Parent=c
+    Instance.new("UICorner",k).CornerRadius=UDim.new(0,8)
     
-    local ic=Instance.new("UICorner")
-    ic.CornerRadius=UDim.new(0,8)
-    ic.Parent=k
-    
-    local s=Instance.new("TextLabel")
+    local s=Instance.new("TextLabel",c)
     s.Size=UDim2.new(1,-20,0,60)
     s.Position=UDim2.new(0,10,0,120)
     s.BackgroundTransparency=1
@@ -104,25 +118,18 @@ local function G()
     s.Font=Enum.Font.GothamMedium
     s.TextSize=16
     s.TextWrapped=true
-    s.Parent=c
     
-    local pc=Instance.new("Frame")
+    local pc=Instance.new("Frame",c)
     pc.Size=UDim2.new(1,-40,0,8)
     pc.Position=UDim2.new(0,20,0,190)
     pc.BackgroundColor3=Color3.fromRGB(40,40,50)
-    pc.Parent=c
     
-    local pb=Instance.new("Frame")
+    local pb=Instance.new("Frame",pc)
     pb.Size=UDim2.new(0,0,1,0)
     pb.BackgroundColor3=C.Colors.Primary
-    pb.Parent=pc
+    Instance.new("UICorner",pb).CornerRadius=UDim.new(1,0)
     
-    local pbc=Instance.new("UICorner")
-    pbc.CornerRadius=UDim.new(1,0)
-    pbc.Parent=pc
-    pbc:Clone().Parent=pb
-    
-    local vb=Instance.new("TextButton")
+    local vb=Instance.new("TextButton",c)
     vb.Size=UDim2.new(1,-40,0,40)
     vb.Position=UDim2.new(0,20,0,210)
     vb.BackgroundColor3=C.Colors.Primary
@@ -131,13 +138,9 @@ local function G()
     vb.TextColor3=C.Colors.Text
     vb.Font=Enum.Font.GothamBold
     vb.TextSize=14
-    vb.Parent=c
+    Instance.new("UICorner",vb).CornerRadius=UDim.new(0,8)
     
-    local vbc=Instance.new("UICorner")
-    vbc.CornerRadius=UDim.new(0,8)
-    vbc.Parent=vb
-    
-    local db=Instance.new("TextButton")
+    local db=Instance.new("TextButton",c)
     db.Size=UDim2.new(1,-40,0,40)
     db.Position=UDim2.new(0,20,0,260)
     db.BackgroundColor3=Color3.fromRGB(88,101,242)
@@ -145,36 +148,43 @@ local function G()
     db.TextColor3=C.Colors.Text
     db.Font=Enum.Font.GothamBold
     db.TextSize=14
-    db.Parent=c
+    Instance.new("UICorner",db).CornerRadius=UDim.new(0,8)
     
-    local dbc=Instance.new("UICorner")
-    dbc.CornerRadius=UDim.new(0,8)
-    dbc.Parent=db
+    local uhb=Instance.new("TextButton",c)
+    uhb.Size=UDim2.new(1,-40,0,40)
+    uhb.Position=UDim2.new(0,20,0,310)
+    uhb.BackgroundColor3=Color3.fromRGB(255,150,50)
+    uhb.Text="LAUNCH UNIVERSAL HUB"
+    uhb.TextColor3=C.Colors.Text
+    uhb.Font=Enum.Font.GothamBold
+    uhb.TextSize=14
+    uhb.Visible=false -- hidden by default
+    Instance.new("UICorner",uhb).CornerRadius=UDim.new(0,8)
     
-    return {Gui=g,Container=c,KeyInput=k,Status=s,ProgressBar=pb,VerifyBtn=vb,DiscordBtn=db}
+    return {Gui=g,Container=c,KeyInput=k,Status=s,ProgressBar=pb,VerifyBtn=vb,DiscordBtn=db,UniversalHubBtn=uhb}
 end
 
+-- Tween anim ykyk 
 local function A(o,p,d)
     local tween=T:Create(o,TweenInfo.new(d or 0.5,Enum.EasingStyle.Quint),p)
     tween:Play()
     return tween
 end
 
+-- shitty ass loader
 local function F(ui,cb)
     ui.Container.Size=UDim2.new(0,0,0,0)
-    A(ui.Container,{Size=UDim2.new(0,350,0,450)})
+    A(ui.Container,{Size=UDim2.new(0,350,0,500)})
     local steps={{"VERIFYING KEY...",0.4},{"CONNECTING...",0.3},{"LOADING ASSETS...",0.6},{"INITIALIZING...",0.5},{"LAUNCHING SCRIPT...",0.4}}
     for i,s in ipairs(steps) do
         ui.Status.Text=s[1]
         A(ui.ProgressBar,{Size=UDim2.new(i/#steps,0,1,0)},s[2])
-        A(ui.Status,{TextTransparency=0.3},0.2)
-        wait(0.2)
-        A(ui.Status,{TextTransparency=0},0.2)
-        wait(s[2]-0.4)
+        wait(s[2])
     end
     cb()
 end
 
+-- Loader
 local function SL()
     L()
     local U=G()
@@ -185,13 +195,6 @@ local function SL()
         U.KeyInput.Text=C.ValidKeys
         U.Status.Text="Get key from our Discord"
     end
-    coroutine.wrap(function()
-        wait(C.FadeDelay)
-        if U.Gui.Parent then
-            A(U.Container,{BackgroundTransparency=0.5})
-            A(U.Container.UIStroke,{Transparency=0.7})
-        end
-    end)()
     
     U.VerifyBtn.MouseButton1Click:Connect(function()
         if K.Attempts>=K.MaxAttempts then
@@ -218,8 +221,9 @@ local function SL()
                         A(U.Container,{Size=UDim2.new(0,0,0,0),Position=UDim2.new(0.5,0,0.5,0),BackgroundTransparency=1}).Completed:Wait()
                         U.Gui:Destroy()
                     else
-                        U.Status.Text="GAME NOT SUPPORTED\nJOIN TO REQUEST IT"
+                        U.Status.Text="GAME NOT SUPPORTED\nLAUNCH UNIVERSAL HUB?"
                         U.Status.TextColor3=C.Colors.Error
+                        U.UniversalHubBtn.Visible=true
                     end
                 end)
             else
@@ -229,11 +233,6 @@ local function SL()
         else
             U.Status.Text=string.format("INVALID KEY (%d/%d ATTEMPTS)",K.Attempts,K.MaxAttempts)
             U.Status.TextColor3=C.Colors.Error
-            local s={10,-8,6,-4,2,0}
-            for _,o in ipairs(s) do
-                U.KeyInput.Position=UDim2.new(0,20+o,0,70)
-                wait(0.05)
-            end
         end
     end)
     
@@ -243,6 +242,18 @@ local function SL()
             U.Status.Text="DISCORD LINK COPIED!\nJOIN TO GET YOUR KEY"
             U.Status.TextColor3=C.Colors.Primary
         end
+    end)
+    
+    U.UniversalHubBtn.MouseButton1Click:Connect(function()
+        F(U,function()
+            U.Status.Text="LAUNCHING UNIVERSAL HUB..."
+            U.Status.TextColor3=C.Colors.Primary
+            pcall(function()
+                loadstring(game:HttpGet("https://raw.githubusercontent.com/lucent-hub/Lucent/main/Extra/UniversalHub.lua"))()
+            end)
+            wait(1)
+            U.Gui:Destroy()
+        end)
     end)
 end
 
