@@ -23,6 +23,9 @@ local C = {
         {Id = 2788229376, Name = "Dahood - some errors...", Exec = function()
             loadstring(game:HttpGet("https://raw.githubusercontent.com/lucent-hub/Lucent/refs/heads/main/Script/Da%20hood/Code.lua"))()
         end},
+        {Id = 142823291, Name = "Murder Mystery 2", Exec = function()
+            loadstring(game:HttpGet("https://raw.githubusercontent.com/lucent-hub/Lucent/refs/heads/main/Script/Murder%20Mystery%202/CODE.lua"))()
+        end},
         -- Simply add more games below
         -- {Id = GAME_ID, Name = "GAME NAME", Exec = function() ... end},
     }
