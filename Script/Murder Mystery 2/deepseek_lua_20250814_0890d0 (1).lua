@@ -2135,9 +2135,9 @@ do
     })
     
     Tabs.SocialsTab:AddButton({
-        Name = "KRT Hub TG",
+        Name = "LUCENT head DEV",
         Callback = function()
-            if pcall(setclipboard, "https://t.me/KRT_client") then
+            if pcall(setclipboard, "<@1216212793947328603>") then
                 OrionLib:MakeNotification({
                     Name = "Copied!",
                     Content = "Link copied to clipboard.",
@@ -2153,30 +2153,7 @@ do
         end    
     })
     
-    Tabs.SocialsTab:AddParagraph({
-        Title = "Kawasaki",
-        Content = "Socials My Friend"
-    })
-    
-    Tabs.SocialsTab:AddButton({
-        Name = "TG Channel",
-        Callback = function()
-            if pcall(setclipboard, "https://t.me/+XFKScmKEPS41OWQ1") then
-                OrionLib:MakeNotification({
-                    Name = "Copied!",
-                    Content = "Link copied to clipboard.",
-                    Time = 3
-                })
-            else
-                OrionLib:MakeNotification({
-                    Name = "Copy Error",
-                    Content = "Failed to copy link. setclipboard function may not be available.",
-                    Time = 5
-                })
-            end
-        end    
-    })
-    
+
     -- Changelogs Tab
     Tabs.ChangelogsTab:AddParagraph({
         Title = "Changelogs:",
