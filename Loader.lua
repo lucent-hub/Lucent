@@ -1,355 +1,248 @@
-local Players = game:GetService("Players")
-local TweenService = game:GetService("TweenService")
+--[[
+-- ╔╦╦╦╦╦╦╦╦╦╦╦╦╦╦╦╦╦╦╦╦╦╦╦╦╦╦╦╦╦╦╦╦╦╦╦╦╦╦╦╦╦╦╦╦╦╦╦╦╦╦╦╦╦╦╦╦╦╦╦╦╗
+-- ╠╬╩╩╩╩╩╩╩╩╩╩╩╩╩╩╩╩╩╩╩╩╩╩╩╩╩╩╩╩╩╩╩╩╩╩╩╩╩╩╩╩╩╩╩╩╩╩╩╩╩╩╩╩╩╩╩╩╩╩╬╣
+-- ╠╣.____     ____ ____________ ___________ __________________.         ╠╣
+-- ╠╣|    |   |    |   \_   ___ \\_   _____/ \      \__    ___/.         ╠╣
+-- ╠╣|    |   |    |   /    \  \/ |    __)_  /   |   \|    |             ╠╣
+-- ╠╣|    |___|    |  /\     \____|        \/    |    \    |             ╠╣
+-- ╠╣|_______ \______/  \______  /_______  /\____|__  /____|             ╠╣
+-- ╠╣        \/                \/        \/         \/                   ╠╣
+-- ╠╬╦╦╦╦╦╦╦╦╦╦╦╦╦╦╦╦╦╦╦╦╦╦╦╦╦╦╦╦╦╦╦╦╦╦╦╦╦╦╦╦╦╦╦╦╦╦╦╦╦╦╦╦╦╦╦╦╦╦╬╣
+-- ╚╩╩╩╩╩╩╩╩╩╩╩╩╩╩╩╩╩╩╩╩╩╩╩╩╩╩╩╩╩╩╩╩╩╩╩╩╩╩╩╩╩╩╩╩╩╩╩╩╩╩╩╩╩╩╩╩╩╩╩╩╝
+]]
 
--- Lucent Theme Configuration
-local Config = {
-    Colors = {
-        Primary = Color3.fromRGB(0, 170, 255),  -- Lucent Blue
-        Secondary = Color3.fromRGB(50, 200, 255),
-        Background = Color3.fromRGB(20, 20, 30),
-        Text = Color3.fromRGB(245, 245, 245),
-        Error = Color3.fromRGB(255, 80, 80),
-        Success = Color3.fromRGB(80, 255, 80),
-        Button = Color3.fromRGB(60, 60, 70)
-    },
-    Discord = "https://discord.gg/SdTStha6p3",
-    ValidKeys = "STXR2020", -- single key as string
-    KeyFile = "LucentKey.txt",
-    SupportedGames = {
-        [12355337193] = { -- Murderers VS Sheriffs DUELS (correct ID)
-            Name = "Murderers VS Sheriffs DUELS",
-            Exec = function()
-                loadstring(game:HttpGet("https://raw.githubusercontent.com/tbao143/thaibao/main/TbaoHubMurdervssheriff"))()
-            end
-        },
-        [2788229376] = { -- DAHood
-            Name = "Dahood - some errors...",
-            Exec = function()
-                loadstring(game:HttpGet("https://raw.githubusercontent.com/lucent-hub/Lucent/refs/heads/main/Script/Da%20hood/Code.lua"))()
-            end
-        },
-    },
-    ParticleDensity = 50,
-    FadeDelay = 5,
-    UniversalHubID = 1234567890
-}
 
--- Key system with file checking
-local KeySystem = {
-    Attempts = 0,
-    MaxAttempts = 3,
-    Verified = false,
-    SavedKeys = {}
-}
+local P=game:GetService("Players")
+local T=game:GetService("TweenService")
+local C={Colors={Primary=Color3.fromRGB(0,170,255),Secondary=Color3.fromRGB(50,200,255),Background=Color3.fromRGB(20,20,30),Text=Color3.fromRGB(245,245,245),Error=Color3.fromRGB(255,80,80),Success=Color3.fromRGB(80,255,80),Button=Color3.fromRGB(60,60,70)},Discord="https://discord.gg/SdTStha6p3",ValidKeys="STXR2020",KeyFile="LucentKey.txt",SupportedGames={[12355337193]={Name="Murderers VS Sheriffs DUELS",Exec=function()loadstring(game:HttpGet("https://raw.githubusercontent.com/tbao143/thaibao/main/TbaoHubMurdervssheriff"))()end},[2788229376]={Name="Dahood - some errors...",Exec=function()loadstring(game:HttpGet("https://raw.githubusercontent.com/lucent-hub/Lucent/refs/heads/main/Script/Da%20hood/Code.lua"))()end}},ParticleDensity=50,FadeDelay=5,UniversalHubID=1234567890}
 
--- Check for key file and load keys
-local function LoadKeysFromFile()
-    if not isfile or not isfile(Config.KeyFile) then return end
-    local success, content = pcall(readfile, Config.KeyFile)
-    if success and content then
-        for key in content:gmatch("[^\r\n]+") do
-            if key ~= "" then
-                table.insert(KeySystem.SavedKeys, key)
-            end
+local K={Attempts=0,MaxAttempts=3,Verified=false,SavedKeys={}}
+
+local function L()
+    if not isfile or not isfile(C.KeyFile) then return end
+    local s,c=pcall(readfile,C.KeyFile)
+    if s and c then
+        for k in c:gmatch("[^\r\n]+") do
+            if k~="" then table.insert(K.SavedKeys,k) end
         end
     end
 end
 
--- Save key to file
-local function SaveKeyToFile(key)
+local function S(k)
     if not writefile then return false end
-    local success = pcall(function()
-        writefile(Config.KeyFile, key)
-    end)
-    return success
+    local s=pcall(function() writefile(C.KeyFile,k) end)
+    return s
 end
 
--- Validate key function
-local function ValidateKey(input)
-    input = input:upper():gsub("%s+", "")
-    -- Check saved keys first
-    for _, key in pairs(KeySystem.SavedKeys) do
-        if input == key then
-            KeySystem.Verified = true
-            return true
-        end
-    end
-    -- Check Config.ValidKeys string
-    if input == Config.ValidKeys then
-        KeySystem.Verified = true
-        return true
-    end
-    KeySystem.Attempts = KeySystem.Attempts + 1
+local function V(i)
+    i=i:upper():gsub("%s+","")
+    for _,k in pairs(K.SavedKeys) do if i==k then K.Verified=true return true end end
+    if i==C.ValidKeys then K.Verified=true return true end
+    K.Attempts=K.Attempts+1
     return false
 end
 
--- Create the UI
-local function CreateLoader()
-    local player = Players.LocalPlayer
-    local gui = Instance.new("ScreenGui")
-    gui.Name = "LucentLoader"
-    gui.ResetOnSpawn = false
-    gui.Parent = player:WaitForChild("PlayerGui")
-
-    local container = Instance.new("Frame")
-    container.Size = UDim2.new(0, 350, 0, 450)
-    container.Position = UDim2.new(0.5, 0, 0.5, 0)
-    container.AnchorPoint = Vector2.new(0.5, 0.5)
-    container.BackgroundColor3 = Config.Colors.Background
-    container.BackgroundTransparency = 0.1
-    container.Parent = gui
-
-    local outline = Instance.new("UIStroke")
-    outline.Color = Config.Colors.Primary
-    outline.Thickness = 2
-    outline.Transparency = 0.5
-    outline.Parent = container
-
-    local corner = Instance.new("UICorner")
-    corner.CornerRadius = UDim.new(0, 12)
-    corner.Parent = container
-
-    local title = Instance.new("TextLabel")
-    title.Size = UDim2.new(1, -20, 0, 40)
-    title.Position = UDim2.new(0, 10, 0, 10)
-    title.BackgroundTransparency = 1
-    title.Text = "LUCENT LOADER"
-    title.TextColor3 = Config.Colors.Primary
-    title.Font = Enum.Font.GothamBlack
-    title.TextSize = 24
-    title.TextXAlignment = Enum.TextXAlignment.Left
-    title.Parent = container
-
-    local keyInput = Instance.new("TextBox")
-    keyInput.Size = UDim2.new(1, -40, 0, 40)
-    keyInput.Position = UDim2.new(0, 20, 0, 70)
-    keyInput.BackgroundColor3 = Config.Colors.Button
-    keyInput.BackgroundTransparency = 0.5
-    keyInput.PlaceholderText = "Enter key from Discord"
-    keyInput.Text = ""
-    keyInput.TextColor3 = Config.Colors.Text
-    keyInput.Font = Enum.Font.GothamMedium
-    keyInput.TextSize = 14
-    keyInput.Parent = container
-
-    local inputCorner = Instance.new("UICorner")
-    inputCorner.CornerRadius = UDim.new(0, 8)
-    inputCorner.Parent = keyInput
-
-    local status = Instance.new("TextLabel")
-    status.Size = UDim2.new(1, -20, 0, 60)
-    status.Position = UDim2.new(0, 10, 0, 120)
-    status.BackgroundTransparency = 1
-    status.Text = "Get key from our Discord"
-    status.TextColor3 = Config.Colors.Text
-    status.Font = Enum.Font.GothamMedium
-    status.TextSize = 16
-    status.TextWrapped = true
-    status.Parent = container
-
-    local progressContainer = Instance.new("Frame")
-    progressContainer.Size = UDim2.new(1, -40, 0, 8)
-    progressContainer.Position = UDim2.new(0, 20, 0, 190)
-    progressContainer.BackgroundColor3 = Color3.fromRGB(40, 40, 50)
-    progressContainer.Parent = container
-
-    local progressBar = Instance.new("Frame")
-    progressBar.Size = UDim2.new(0, 0, 1, 0)
-    progressBar.BackgroundColor3 = Config.Colors.Primary
-    progressBar.Parent = progressContainer
-
-    local progressCorner = Instance.new("UICorner")
-    progressCorner.CornerRadius = UDim.new(1, 0)
-    progressCorner.Parent = progressContainer
-    progressCorner:Clone().Parent = progressBar
-
-    local verifyBtn = Instance.new("TextButton")
-    verifyBtn.Size = UDim2.new(1, -40, 0, 40)
-    verifyBtn.Position = UDim2.new(0, 20, 0, 210)
-    verifyBtn.BackgroundColor3 = Config.Colors.Primary
-    verifyBtn.BackgroundTransparency = 0.3
-    verifyBtn.Text = "VERIFY KEY"
-    verifyBtn.TextColor3 = Config.Colors.Text
-    verifyBtn.Font = Enum.Font.GothamBold
-    verifyBtn.TextSize = 14
-    verifyBtn.Parent = container
-
-    local verifyCorner = Instance.new("UICorner")
-    verifyCorner.CornerRadius = UDim.new(0, 8)
-    verifyCorner.Parent = verifyBtn
-
-    local discordBtn = Instance.new("TextButton")
-    discordBtn.Size = UDim2.new(1, -40, 0, 40)
-    discordBtn.Position = UDim2.new(0, 20, 0, 260)
-    discordBtn.BackgroundColor3 = Color3.fromRGB(88, 101, 242)
-    discordBtn.Text = "GET KEY FROM DISCORD"
-    discordBtn.TextColor3 = Config.Colors.Text
-    discordBtn.Font = Enum.Font.GothamBold
-    discordBtn.TextSize = 14
-    discordBtn.Parent = container
-
-    local discordCorner = Instance.new("UICorner")
-    discordCorner.CornerRadius = UDim.new(0, 8)
-    discordCorner.Parent = discordBtn
-
-    return {
-        Gui = gui,
-        Container = container,
-        KeyInput = keyInput,
-        Status = status,
-        ProgressBar = progressBar,
-        VerifyBtn = verifyBtn,
-        DiscordBtn = discordBtn
-    }
+local function G()
+    local p=P.LocalPlayer
+    local g=Instance.new("ScreenGui")
+    g.Name="LucentLoader"
+    g.ResetOnSpawn=false
+    g.Parent=p:WaitForChild("PlayerGui")
+    
+    local c=Instance.new("Frame")
+    c.Size=UDim2.new(0,350,0,450)
+    c.Position=UDim2.new(0.5,0,0.5,0)
+    c.AnchorPoint=Vector2.new(0.5,0.5)
+    c.BackgroundColor3=C.Colors.Background
+    c.BackgroundTransparency=0.1
+    c.Parent=g
+    
+    local o=Instance.new("UIStroke")
+    o.Color=C.Colors.Primary
+    o.Thickness=2
+    o.Transparency=0.5
+    o.Parent=c
+    
+    local u=Instance.new("UICorner")
+    u.CornerRadius=UDim.new(0,12)
+    u.Parent=c
+    
+    local t=Instance.new("TextLabel")
+    t.Size=UDim2.new(1,-20,0,40)
+    t.Position=UDim2.new(0,10,0,10)
+    t.BackgroundTransparency=1
+    t.Text="LUCENT LOADER"
+    t.TextColor3=C.Colors.Primary
+    t.Font=Enum.Font.GothamBlack
+    t.TextSize=24
+    t.TextXAlignment=Enum.TextXAlignment.Left
+    t.Parent=c
+    
+    local k=Instance.new("TextBox")
+    k.Size=UDim2.new(1,-40,0,40)
+    k.Position=UDim2.new(0,20,0,70)
+    k.BackgroundColor3=C.Colors.Button
+    k.BackgroundTransparency=0.5
+    k.PlaceholderText="Enter key from Discord"
+    k.Text=""
+    k.TextColor3=C.Colors.Text
+    k.Font=Enum.Font.GothamMedium
+    k.TextSize=14
+    k.Parent=c
+    
+    local ic=Instance.new("UICorner")
+    ic.CornerRadius=UDim.new(0,8)
+    ic.Parent=k
+    
+    local s=Instance.new("TextLabel")
+    s.Size=UDim2.new(1,-20,0,60)
+    s.Position=UDim2.new(0,10,0,120)
+    s.BackgroundTransparency=1
+    s.Text="Get key from our Discord"
+    s.TextColor3=C.Colors.Text
+    s.Font=Enum.Font.GothamMedium
+    s.TextSize=16
+    s.TextWrapped=true
+    s.Parent=c
+    
+    local pc=Instance.new("Frame")
+    pc.Size=UDim2.new(1,-40,0,8)
+    pc.Position=UDim2.new(0,20,0,190)
+    pc.BackgroundColor3=Color3.fromRGB(40,40,50)
+    pc.Parent=c
+    
+    local pb=Instance.new("Frame")
+    pb.Size=UDim2.new(0,0,1,0)
+    pb.BackgroundColor3=C.Colors.Primary
+    pb.Parent=pc
+    
+    local pbc=Instance.new("UICorner")
+    pbc.CornerRadius=UDim.new(1,0)
+    pbc.Parent=pc
+    pbc:Clone().Parent=pb
+    
+    local vb=Instance.new("TextButton")
+    vb.Size=UDim2.new(1,-40,0,40)
+    vb.Position=UDim2.new(0,20,0,210)
+    vb.BackgroundColor3=C.Colors.Primary
+    vb.BackgroundTransparency=0.3
+    vb.Text="VERIFY KEY"
+    vb.TextColor3=C.Colors.Text
+    vb.Font=Enum.Font.GothamBold
+    vb.TextSize=14
+    vb.Parent=c
+    
+    local vbc=Instance.new("UICorner")
+    vbc.CornerRadius=UDim.new(0,8)
+    vbc.Parent=vb
+    
+    local db=Instance.new("TextButton")
+    db.Size=UDim2.new(1,-40,0,40)
+    db.Position=UDim2.new(0,20,0,260)
+    db.BackgroundColor3=Color3.fromRGB(88,101,242)
+    db.Text="GET KEY FROM DISCORD"
+    db.TextColor3=C.Colors.Text
+    db.Font=Enum.Font.GothamBold
+    db.TextSize=14
+    db.Parent=c
+    
+    local dbc=Instance.new("UICorner")
+    dbc.CornerRadius=UDim.new(0,8)
+    dbc.Parent=db
+    
+    return {Gui=g,Container=c,KeyInput=k,Status=s,ProgressBar=pb,VerifyBtn=vb,DiscordBtn=db}
 end
 
-local function Animate(object, properties, duration)
-    local tween = TweenService:Create(object, TweenInfo.new(duration or 0.5, Enum.EasingStyle.Quint), properties)
+local function A(o,p,d)
+    local tween=T:Create(o,TweenInfo.new(d or 0.5,Enum.EasingStyle.Quint),p)
     tween:Play()
     return tween
 end
 
-local function LoadingSequence(ui, callback)
-    ui.Container.Size = UDim2.new(0, 0, 0, 0)
-    Animate(ui.Container, {Size = UDim2.new(0, 350, 0, 450)})
-
-    local steps = {
-        {"VERIFYING KEY...", 0.4},
-        {"CONNECTING...", 0.3},
-        {"LOADING ASSETS...", 0.6},
-        {"INITIALIZING...", 0.5},
-        {"LAUNCHING SCRIPT...", 0.4}
-    }
-
-    for i, step in ipairs(steps) do
-        ui.Status.Text = step[1]
-        Animate(ui.ProgressBar, {Size = UDim2.new(i/#steps, 0, 1, 0)}, step[2])
-        Animate(ui.Status, {TextTransparency = 0.3}, 0.2)
+local function F(ui,cb)
+    ui.Container.Size=UDim2.new(0,0,0,0)
+    A(ui.Container,{Size=UDim2.new(0,350,0,450)})
+    local steps={{"VERIFYING KEY...",0.4},{"CONNECTING...",0.3},{"LOADING ASSETS...",0.6},{"INITIALIZING...",0.5},{"LAUNCHING SCRIPT...",0.4}}
+    for i,s in ipairs(steps) do
+        ui.Status.Text=s[1]
+        A(ui.ProgressBar,{Size=UDim2.new(i/#steps,0,1,0)},s[2])
+        A(ui.Status,{TextTransparency=0.3},0.2)
         wait(0.2)
-        Animate(ui.Status, {TextTransparency = 0}, 0.2)
-        wait(step[2] - 0.4)
+        A(ui.Status,{TextTransparency=0},0.2)
+        wait(s[2]-0.4)
     end
-
-    callback()
+    cb()
 end
 
-local function StartLoader()
-    LoadKeysFromFile()
-
-    local UI = CreateLoader()
-
-    if #KeySystem.SavedKeys > 0 then
-        UI.KeyInput.Text = KeySystem.SavedKeys[1]
-        UI.Status.Text = "Key loaded from file"
+local function SL()
+    L()
+    local U=G()
+    if #K.SavedKeys>0 then
+        U.KeyInput.Text=K.SavedKeys[1]
+        U.Status.Text="Key loaded from file"
     else
-        UI.KeyInput.Text = Config.ValidKeys
-        UI.Status.Text = "Get key from our Discord"
+        U.KeyInput.Text=C.ValidKeys
+        U.Status.Text="Get key from our Discord"
     end
-
     coroutine.wrap(function()
-        wait(Config.FadeDelay)
-        if UI.Gui.Parent then
-            Animate(UI.Container, {BackgroundTransparency = 0.5})
-            Animate(UI.Container.UIStroke, {Transparency = 0.7})
+        wait(C.FadeDelay)
+        if U.Gui.Parent then
+            A(U.Container,{BackgroundTransparency=0.5})
+            A(U.Container.UIStroke,{Transparency=0.7})
         end
     end)()
-
-    UI.VerifyBtn.MouseButton1Click:Connect(function()
-        if KeySystem.Attempts >= KeySystem.MaxAttempts then
-            UI.Status.Text = "MAX ATTEMPTS REACHED\nJOIN OUR DISCORD FOR HELP"
-            UI.Status.TextColor3 = Config.Colors.Error
+    
+    U.VerifyBtn.MouseButton1Click:Connect(function()
+        if K.Attempts>=K.MaxAttempts then
+            U.Status.Text="MAX ATTEMPTS REACHED\nJOIN OUR DISCORD FOR HELP"
+            U.Status.TextColor3=C.Colors.Error
             return
         end
-
-        if UI.KeyInput.Text == "" then
-            UI.Status.Text = "PLEASE ENTER A KEY"
-            UI.Status.TextColor3 = Config.Colors.Error
+        if U.KeyInput.Text=="" then
+            U.Status.Text="PLEASE ENTER A KEY"
+            U.Status.TextColor3=C.Colors.Error
             return
         end
-
-        if ValidateKey(UI.KeyInput.Text) then
-            if SaveKeyToFile(UI.KeyInput.Text) then
-                LoadingSequence(UI, function()
-                    local gameId = game.PlaceId
-                    local gameData = Config.SupportedGames[gameId]
-                    if gameData then
-                        UI.Status.Text = gameData.Name.."\nLAUNCHED SUCCESSFULLY"
-                        UI.Status.TextColor3 = Config.Colors.Success
-                        Animate(UI.ProgressBar, {BackgroundColor3 = Config.Colors.Success})
-                        pcall(gameData.Exec)
+        if V(U.KeyInput.Text) then
+            if S(U.KeyInput.Text) then
+                F(U,function()
+                    local gId=game.PlaceId
+                    local gD=C.SupportedGames[gId]
+                    if gD then
+                        U.Status.Text=gD.Name.."\nLAUNCHED SUCCESSFULLY"
+                        U.Status.TextColor3=C.Colors.Success
+                        A(U.ProgressBar,{BackgroundColor3=C.Colors.Success})
+                        pcall(gD.Exec)
                         wait(1.5)
-                        Animate(UI.Container, {
-                            Size = UDim2.new(0, 0, 0, 0),
-                            Position = UDim2.new(0.5, 0, 0.5, 0),
-                            BackgroundTransparency = 1
-                        }).Completed:Wait()
-                        UI.Gui:Destroy()
+                        A(U.Container,{Size=UDim2.new(0,0,0,0),Position=UDim2.new(0.5,0,0.5,0),BackgroundTransparency=1}).Completed:Wait()
+                        U.Gui:Destroy()
                     else
-                        UI.Status.Text = "GAME NOT SUPPORTED\nJOIN TO REQUEST IT"
-                        UI.Status.TextColor3 = Config.Colors.Error
+                        U.Status.Text="GAME NOT SUPPORTED\nJOIN TO REQUEST IT"
+                        U.Status.TextColor3=C.Colors.Error
                     end
                 end)
             else
-                UI.Status.Text = "FAILED TO SAVE KEY\nTRY AGAIN"
-                UI.Status.TextColor3 = Config.Colors.Error
+                U.Status.Text="FAILED TO SAVE KEY\nTRY AGAIN"
+                U.Status.TextColor3=C.Colors.Error
             end
         else
-            UI.Status.Text = string.format("INVALID KEY (%d/%d ATTEMPTS)", KeySystem.Attempts, KeySystem.MaxAttempts)
-            UI.Status.TextColor3 = Config.Colors.Error
-            local shake = {10, -8, 6, -4, 2, 0}
-            for _, offset in ipairs(shake) do
-                UI.KeyInput.Position = UDim2.new(0, 20 + offset, 0, 70)
+            U.Status.Text=string.format("INVALID KEY (%d/%d ATTEMPTS)",K.Attempts,K.MaxAttempts)
+            U.Status.TextColor3=C.Colors.Error
+            local s={10,-8,6,-4,2,0}
+            for _,o in ipairs(s) do
+                U.KeyInput.Position=UDim2.new(0,20+o,0,70)
                 wait(0.05)
             end
         end
     end)
-
-    UI.DiscordBtn.MouseButton1Click:Connect(function()
+    
+    U.DiscordBtn.MouseButton1Click:Connect(function()
         if setclipboard then
-            setclipboard(Config.Discord)
-            UI.Status.Text = "DISCORD LINK COPIED!\nJOIN TO GET YOUR KEY"
-            UI.Status.TextColor3 = Config.Colors.Primary
+            setclipboard(C.Discord)
+            U.Status.Text="DISCORD LINK COPIED!\nJOIN TO GET YOUR KEY"
+            U.Status.TextColor3=C.Colors.Primary
         end
     end)
 end
 
-StartLoader()
-
--- At the end of your StartLoader() function, after DiscordBtn connection
-local function AddUniversalButton(UI)
-    local universalBtn = Instance.new("TextButton")
-    universalBtn.Size = UDim2.new(1, -40, 0, 40)
-    universalBtn.Position = UDim2.new(0, 20, 0, 310)
-    universalBtn.BackgroundColor3 = Config.Colors.Secondary
-    universalBtn.Text = "LAUNCH UNIVERSAL SCRIPT"
-    universalBtn.TextColor3 = Config.Colors.Text
-    universalBtn.Font = Enum.Font.GothamBold
-    universalBtn.TextSize = 14
-    universalBtn.Parent = UI.Container
-
-    local uniCorner = Instance.new("UICorner")
-    uniCorner.CornerRadius = UDim.new(0, 8)
-    uniCorner.Parent = universalBtn
-
-    universalBtn.MouseButton1Click:Connect(function()
-        UI.Status.Text = "LAUNCHING UNIVERSAL SCRIPT..."
-        UI.Status.TextColor3 = Config.Colors.Primary
-        pcall(function()
-            -- Replace this with any universal hub code or logic
-            print("get trolled kid") 
-        end)
-    end)
-end
-
--- Call this after StartLoader() GUI is created
-coroutine.wrap(function()
-    local player = Players.LocalPlayer
-    local gui = player:WaitForChild("PlayerGui"):WaitForChild("LucentLoader")
-    local UI = {
-        Gui = gui,
-        Container = gui:FindFirstChildWhichIsA("Frame"),
-        Status = gui:FindFirstChildWhichIsA("Frame") and gui:FindFirstChildWhichIsA("Frame"):FindFirstChild("TextLabel")
-    }
-    AddUniversalButton(UI)
-end)()
-
+SL()
