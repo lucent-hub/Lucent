@@ -1,22 +1,10 @@
---[[
--- ╔╦╦╦╦╦╦╦╦╦╦╦╦╦╦╦╦╦╦╦╦╦╦╦╦╦╦╦╦╦╦╦╦╦╦╦╦╦╦╦╦╦╦╦╦╦╦╦╦╦╦╦╦╦╦╦╦╦╦╦╦╗
--- ╠╬╩╩╩╩╩╩╩╩╩╩╩╩╩╩╩╩╩╩╩╩╩╩╩╩╩╩╩╩╩╩╩╩╩╩╩╩╩╩╩╩╩╩╩╩╩╩╩╩╩╩╩╩╩╩╩╩╩╩╬╣
--- ╠╣.____     ____ ____________ ___________ __________________.         ╠╣
--- ╠╣|    |   |    |   \_   ___ \\_   _____/ \      \__    ___/.         ╠╣
--- ╠╣|    |   |    |   /    \  \/ |    __)_  /   |   \|    |             ╠╣
--- ╠╣|    |___|    |  /\     \____|        \/    |    \    |             ╠╣
--- ╠╣|_______ \______/  \______  /_______  /\____|__  /____|             ╠╣
--- ╠╣        \/                \/        \/         \/                   ╠╣
--- ╠╬╦╦╦╦╦╦╦╦╦╦╦╦╦╦╦╦╦╦╦╦╦╦╦╦╦╦╦╦╦╦╦╦╦╦╦╦╦╦╦╦╦╦╦╦╦╦╦╦╦╦╦╦╦╦╦╦╦╦╬╣
--- ╚╩╩╩╩╩╩╩╩╩╩╩╩╩╩╩╩╩╩╩╩╩╩╩╩╩╩╩╩╩╩╩╩╩╩╩╩╩╩╩╩╩╩╩╩╩╩╩╩╩╩╩╩╩╩╩╩╩╩╩╩╝
-                   ꧁https://discord.gg/zvVVXb9sfW꧂
-]]
+--[[ LUCENT LOADER WITH UNIVERSAL HUB & SCRIPT OBSCURE EXAMPLE ]]
 
--- helper w stuff yk
+-- Services
 local P=game:GetService("Players")
 local T=game:GetService("TweenService")
 
--- confger
+-- Config
 local C={
     Colors={
         Primary=Color3.fromRGB(0,170,255),
@@ -39,7 +27,7 @@ local C={
     UniversalHubID=1234567890 -- Place ID for universal hub
 }
 
--- Key sys
+-- Key System
 local K={Attempts=0,MaxAttempts=3,Verified=false,SavedKeys={}}
 
 local function L()
@@ -66,7 +54,7 @@ local function V(i)
     return false
 end
 
--- GUI 
+-- GUI Creation
 local function G()
     local p=P.LocalPlayer
     local g=Instance.new("ScreenGui",p:WaitForChild("PlayerGui"))
@@ -164,14 +152,14 @@ local function G()
     return {Gui=g,Container=c,KeyInput=k,Status=s,ProgressBar=pb,VerifyBtn=vb,DiscordBtn=db,UniversalHubBtn=uhb}
 end
 
--- Tween anim ykyk 
+-- Tween Helper
 local function A(o,p,d)
     local tween=T:Create(o,TweenInfo.new(d or 0.5,Enum.EasingStyle.Quint),p)
     tween:Play()
     return tween
 end
 
--- shitty ass loader
+-- Fake loader animation
 local function F(ui,cb)
     ui.Container.Size=UDim2.new(0,0,0,0)
     A(ui.Container,{Size=UDim2.new(0,350,0,500)})
