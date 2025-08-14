@@ -15,7 +15,7 @@
 
 local P=game:GetService("Players")
 local T=game:GetService("TweenService")
-local C={Colors={Primary=Color3.fromRGB(0,170,255),Secondary=Color3.fromRGB(50,200,255),Background=Color3.fromRGB(20,20,30),Text=Color3.fromRGB(245,245,245),Error=Color3.fromRGB(255,80,80),Success=Color3.fromRGB(80,255,80),Button=Color3.fromRGB(60,60,70)},Discord="https://discord.gg/SdTStha6p3",ValidKeys="STXR2020",KeyFile="LucentKey.txt",SupportedGames={[12355337193]={Name="Murderers VS Sheriffs DUELS",Exec=function()loadstring(game:HttpGet("https://raw.githubusercontent.com/tbao143/thaibao/main/TbaoHubMurdervssheriff"))()end},[2788229376]={Name="Dahood - some errors...",Exec=function()loadstring(game:HttpGet("https://raw.githubusercontent.com/lucent-hub/Lucent/refs/heads/main/Script/Da%20hood/Code.lua"))()end}},ParticleDensity=50,FadeDelay=5,UniversalHubID=1234567890}
+local C={Colors={Primary=Color3.fromRGB(0,170,255),Secondary=Color3.fromRGB(50,200,255),Background=Color3.fromRGB(20,20,30),Text=Color3.fromRGB(245,245,245),Error=Color3.fromRGB(255,80,80),Success=Color3.fromRGB(80,255,80),Button=Color3.fromRGB(60,60,70)},Discord="https://discord.gg/SdTStha6p3",ValidKeys="STXR2020",KeyFile="LucentKey.txt",SupportedGames={[12355337193]={Name="Murderers VS Sheriffs DUELS",Exec=function()loadstring(game:HttpGet("https://raw.githubusercontent.com/lucent-hub/Lucent/refs/heads/main/Script/Murder%20VS%20Sheriff/Code.lua"))()end},[2788229376]={Name="Dahood - some errors...",Exec=function()loadstring(game:HttpGet("https://raw.githubusercontent.com/lucent-hub/Lucent/refs/heads/main/Script/Da%20hood/Code.lua"))()end}},ParticleDensity=50,FadeDelay=5,UniversalHubID=1234567890}
 
 local K={Attempts=0,MaxAttempts=3,Verified=false,SavedKeys={}}
 
