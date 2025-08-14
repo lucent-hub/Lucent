@@ -314,3 +314,42 @@ local function StartLoader()
 end
 
 StartLoader()
+
+-- At the end of your StartLoader() function, after DiscordBtn connection
+local function AddUniversalButton(UI)
+    local universalBtn = Instance.new("TextButton")
+    universalBtn.Size = UDim2.new(1, -40, 0, 40)
+    universalBtn.Position = UDim2.new(0, 20, 0, 310)
+    universalBtn.BackgroundColor3 = Config.Colors.Secondary
+    universalBtn.Text = "LAUNCH UNIVERSAL SCRIPT"
+    universalBtn.TextColor3 = Config.Colors.Text
+    universalBtn.Font = Enum.Font.GothamBold
+    universalBtn.TextSize = 14
+    universalBtn.Parent = UI.Container
+
+    local uniCorner = Instance.new("UICorner")
+    uniCorner.CornerRadius = UDim.new(0, 8)
+    uniCorner.Parent = universalBtn
+
+    universalBtn.MouseButton1Click:Connect(function()
+        UI.Status.Text = "LAUNCHING UNIVERSAL SCRIPT..."
+        UI.Status.TextColor3 = Config.Colors.Primary
+        pcall(function()
+            -- Replace this with any universal hub code or logic
+            print("get trolled kid") 
+        end)
+    end)
+end
+
+-- Call this after StartLoader() GUI is created
+coroutine.wrap(function()
+    local player = Players.LocalPlayer
+    local gui = player:WaitForChild("PlayerGui"):WaitForChild("LucentLoader")
+    local UI = {
+        Gui = gui,
+        Container = gui:FindFirstChildWhichIsA("Frame"),
+        Status = gui:FindFirstChildWhichIsA("Frame") and gui:FindFirstChildWhichIsA("Frame"):FindFirstChild("TextLabel")
+    }
+    AddUniversalButton(UI)
+end)()
+
