@@ -4,24 +4,18 @@ local Libary = loadstring(game:HttpGet("https://raw.githubusercontent.com/tbao14
 workspace.FallenPartsDestroyHeight = -math.huge
 
 local Window = Libary:MakeWindow({
-    Title = "Chaos Hub | Brookhaven RP ",
-    SubTitle = "by: Luscaa and venom",
-    LoadText = "Carregando Chaos Hub",
-    Flags = "ChaosHub_Broookhaven"
+    Title = "Lucent hub | Brookhaven RP ",
+    SubTitle = "by: LUCENT",
+    LoadText = "Loading fine shyt",
+    Flags = "Lucent_Broookhaven"
 })
 Window:AddMinimizeButton({
-    Button = { Image = "rbxassetid://131669852271916", BackgroundTransparency = 0 },
+    Button = { Image = "rbxassetid://102535316350486", BackgroundTransparency = 0 },
     Corner = { CornerRadius = UDim.new(35, 1) },
 })
 
 local InfoTab = Window:MakeTab({ Title = "Info", Icon = "rbxassetid://15309138473" })
 
-
-
-InfoTab:AddSection({ "Informações do Script" })
-InfoTab:AddParagraph({ "Owner / Developer:", "Luscaa and veno." })
-InfoTab:AddParagraph({ "Colaborações:", "Blue, sukuna, Magekko, Darkness, Star, Toddy" })
-InfoTab:AddParagraph({ "Você está usando:", "Chaos Hub Brookhaven " })
 InfoTab:AddParagraph({"Your executor:", executor})
 
 InfoTab:AddSection({ "Rejoin" })
@@ -41,7 +35,7 @@ local TrollTab = Window:MakeTab({ Title = "Scripts Trolls", Icon = "rbxassetid:/
 TrollTab:AddSection({ "Black Hole" })
 TrollTab:AddButton({
     Name = "Black Hole",
-    Description = " Ativando isso você puxa Parts até o seu personagem",
+    Description = " Activating this pulls Parts to your character",
     Callback = function()
         local Players = game:GetService("Players")
 local RunService = game:GetService("RunService")
@@ -443,8 +437,8 @@ coroutine.wrap(JUBNQKI_fake_script)()
 TrollTab:AddSection({ "Invisível" })
 
 TrollTab:AddButton({
-    Name = "Ficar Invisível",
-    Description = "Ficar invisível FE",
+    Name = "Become Invisible",
+    Description = "Become Invisible FE",
 Callback = function()
         
         local args = {
@@ -515,7 +509,7 @@ end
 
 TrollTab:AddToggle({
     Name = "RGB Character",
-    Description = "Deixa seu personagem RGB",
+    Description = "Leave your character RGB",
     Default = false,
     Callback = function(value)
         toggleRGBCharacter(value)
@@ -523,7 +517,7 @@ TrollTab:AddToggle({
 })
 
 
-TrollTab:AddSection({ "Cabelo RGB" })
+TrollTab:AddSection({ "Hair RGB" })
 local hairColors = {
     Color3.new(1, 1, 0), Color3.new(0, 0, 1), Color3.new(1, 0, 1), Color3.new(1, 1, 1),
     Color3.new(0, 1, 0), Color3.new(0.5, 0, 1), Color3.new(1, 0.647, 0), Color3.new(0, 1, 1)
@@ -544,8 +538,8 @@ end
 
 
 TrollTab:AddToggle({
-    Name = "Cabelo RGB",
-    Description = "Deixa Seu Cabelo RGB",
+    Name = "Hair RGB",
+    Description = "Leave Your Hair RGB",
     Default = false,
     Callback = function(value)
         isActive = value
@@ -560,7 +554,7 @@ TrollTab:AddToggle({
 TrollTab:AddSection({ "Anti Sit" })
 TrollTab:AddToggle({
     Name = "Anti Sit",
-    Description = "Não Deixa seu personagem Sentar",
+    Description = "anti Your Character Sit",
     Default = false,
     Callback = function(Value)
         local player = game.Players.LocalPlayer
@@ -679,18 +673,18 @@ end
 -- Função KillPlayerCouch
 local function KillPlayerCouch()
     if not selectedPlayerName then
-        warn("Erro: Nenhum jogador selecionado")
+        warn("Erro: No player selected")
         return
     end
     local target = Players:FindFirstChild(selectedPlayerName)
     if not target or not target.Character then
-        warn("Erro: Jogador alvo não encontrado ou sem personagem")
+        warn("Error: Target player not found or missing character")
         return
     end
 
     local char = LocalPlayer.Character
     if not char then
-        warn("Erro: Personagem do jogador local não encontrado")
+        warn("Error: Local player character not found")
         return
     end
     local hum = char:FindFirstChildOfClass("Humanoid")
@@ -959,11 +953,11 @@ end
 local function KillWithCouch()
     local targetPlayer = Players:FindFirstChild(getgenv().Target)
     if not targetPlayer then
-        warn("Erro: Nenhum jogador alvo selecionado")
+        warn("Error: No target player selected")
         return
     end
     if not targetPlayer.Character or not targetPlayer.Character:FindFirstChild("HumanoidRootPart") then
-        warn("Erro: Jogador alvo sem personagem ou HumanoidRootPart")
+        warn("Error: Target player has no character or HumanoidRootPart")
         return
     end
 
@@ -974,7 +968,7 @@ local function KillWithCouch()
 
     local couch = LocalPlayer.Backpack:WaitForChild("Couch", 2)
     if not couch then
-        warn("Erro: Sofá não encontrado no Backpack")
+        warn("Error: Sofa components not found")
         return
     end
 
@@ -987,13 +981,13 @@ local function KillWithCouch()
         seat2.Disabled = true
         handle.Name = "Handle "
     else
-        warn("Erro: Componentes do sofá não encontrados")
+        warn("")
         return
     end
     couch.Parent = LocalPlayer.Character
 
     local tet = Instance.new("BodyVelocity", seat1)
-    tet.MaxForce = Vector3.new(math.huge, math.huge, math.huge)
+    tet.MaxForce = Vector3.new(math.huge, math.hugeErrorh.huge)
     tet.P = 1250
     tet.Velocity = Vector3.new(0, 0, 0)
     tet.Name = "#mOVOOEPF$#@F$#GERE..>V<<<<EW<V<<W"
@@ -1053,7 +1047,7 @@ end
     end
 
     local killDropdown = Troll:AddDropdown({
-        Name = "Selecionar Jogador",
+        Name = "",
         Options = getPlayerList(),
         Default = "",
         Callback = function(value)
@@ -1153,8 +1147,8 @@ end
     local MethodSection = Troll:AddSection({ Name = "Métodos" })
 
     Troll:AddDropdown({
-        Name = "Selecionar Método para Matar",
-        Options = {"Bus", "Couch", "Couch Sem ir até o alvo [BETA]"},
+        Name = "Select Killing Method from",
+        Options = {"Bus", "Couch", "Couch Without Going to the Target [BETA]"},
         Default = "",
         Callback = function(value)
             methodKill = value
@@ -1163,22 +1157,22 @@ end
     })
 
     Troll:AddButton({
-        Name = "Matar Player",
+        Name = "kill Player",
         Callback = function()
             if not selectedPlayerName or not Players:FindFirstChild(selectedPlayerName) then
-                print("Erro: Player não selecionado ou não existe")
+                print("Error: Player not selected or does not exist from")
                 return
             end
             if methodKill == "Couch" then
                 KillPlayerCouch()
-            elseif methodKill == "Couch Sem ir até o alvo [BETA]" then
+            elseif methodKill == "Couch Without Going to the Target [BETA" then
                 KillWithCouch()
             else
                 -- Método de ônibus
                 local character = LocalPlayer.Character
                 local humanoidRootPart = character and character:FindFirstChild("HumanoidRootPart")
                 if not humanoidRootPart then
-                    warn("Erro: HumanoidRootPart do jogador local não encontrado")
+                    warn("Error: Local Player's HumanoidRootPart not found")
                     return
                 end
 
@@ -1216,8 +1210,7 @@ end
                             for k, v in pairs(bus.Body:GetChildren()) do
                                 if v:IsA("Seat") then
                                     v.CanTouch = false
-                                end
-                            end
+                            Select Player    end
                         end
                     end
                 end
@@ -1231,7 +1224,7 @@ end
                                 if targetHumanoid and targetHumanoid.Sit then
                                     if character.Humanoid then
                                         bus:SetPrimaryPartCFrame(CFrame.new(Vector3.new(9999, -450, 9999)))
-                                        print("Jogador sentou, levando ônibus para o void!")
+                                        print("car method!")
                                         task.wait(0.2)
 
                                         local function simulateJump()
@@ -1242,10 +1235,10 @@ end
                                         end
 
                                         simulateJump()
-                                        print("Simulando pulo!")
+                                        print("jumpin!")
                                         task.wait(0.5)
                                         humanoidRootPart.CFrame = originalPosition
-                                        print("Player voltou para a posição inicial.")
+                                        print("kys.")
                                     end
                                     break
                                 else
@@ -1267,22 +1260,22 @@ end
     })
 
     Troll:AddButton({
-        Name = "Puxar Player",
+        Name = "bring Player",
         Callback = function()
             if not selectedPlayerName or not Players:FindFirstChild(selectedPlayerName) then
-                print("Erro: Player não selecionado ou não existe")
+                print("ay")
                 return
             end
             if methodKill == "Couch" then
                 BringPlayerLLL()
-            elseif methodKill == "Couch Sem ir até o alvo [BETA]" then
+            elseif methodKill == "Couch Without Going to the Target[BETA]" then
                 BringWithCouch()
             else
                 -- Método de ônibus
                 local character = LocalPlayer.Character
                 local humanoidRootPart = character and character:FindFirstChild("HumanoidRootPart")
                 if not humanoidRootPart then
-                    warn("Erro: HumanoidRootPart do jogador local não encontrado")
+                    warn("")
                     return
                 end
 
@@ -1354,7 +1347,7 @@ end
 
 local function houseBanKill()
     if not selectedPlayerName then
-        print("Nenhum jogador selecionado!")
+        print("house kill!")
         return
     end
 
@@ -1908,7 +1901,7 @@ Troll:AddButton({
     Name = "Fling - Boat",
     Callback = function()
         if not selectedPlayerName or not game.Players:FindFirstChild(selectedPlayerName) then
-            warn("Nenhum jogador selecionado ou não existe")
+            warn("Nil.n")
             return
         end
 
@@ -1919,7 +1912,7 @@ Troll:AddButton({
         local Vehicles = game.Workspace:FindFirstChild("Vehicles")
 
         if not Humanoid or not RootPart then
-            warn("Humanoid ou RootPart inválido")
+            warn("nil")
             return
         end
 
@@ -1933,13 +1926,13 @@ Troll:AddButton({
 
         local PCar = Vehicles:FindFirstChild(Player.Name.."Car") or spawnBoat()
         if not PCar then
-            warn("Falha ao spawnar o barco")
+            warn("nil")
             return
         end
 
         local Seat = PCar:FindFirstChild("Body") and PCar.Body:FindFirstChild("VehicleSeat")
         if not Seat then
-            warn("Assento não encontrado")
+            warn("A")
             return
         end
 
@@ -1948,11 +1941,11 @@ Troll:AddButton({
             RootPart.CFrame = Seat.CFrame * CFrame.new(0, 1, 0)
         until Humanoid.SeatPart == Seat
 
-        print("Barco spawnado!")
+        print("nil!")
 
         local TargetPlayer = game.Players:FindFirstChild(selectedPlayerName)
         if not TargetPlayer or not TargetPlayer.Character then
-            warn("Jogador não encontrado")
+            warn("nil")
             return
         end
 
@@ -1961,7 +1954,7 @@ Troll:AddButton({
         local TargetRP = TargetC:FindFirstChild("HumanoidRootPart")
 
         if not TargetRP or not TargetH then
-            warn("Humanoid ou RootPart do alvo não encontrado")
+            warn("Humanoid or RootPart of target not found")
             return
         end
 
@@ -1971,7 +1964,7 @@ Troll:AddButton({
         Spin.MaxTorque = Vector3.new(0, math.huge, 0)
         Spin.AngularVelocity = Vector3.new(0, 369, 0) 
 
-        print("Fling ativo!")
+        print("Active fling!")
 
         local function moveCar(TargetRP, offset)
             if PCar and PCar.PrimaryPart then
@@ -2002,7 +1995,7 @@ Troll:AddButton({
 
             if Spin and Spin.Parent then
                 Spin:Destroy()
-                print("Fling desativado")
+                print("Fling disabled")
             end
         end)
     end
@@ -2010,7 +2003,7 @@ Troll:AddButton({
 print("Fling - Boat button created")
 
 Troll:AddButton({
-    Name = "Desligar Fling - Boat",
+    Name = "Turn Off Fling - Boat",
     Callback = function()
         local Player = game.Players.LocalPlayer
         local Character = Player.Character
@@ -2019,19 +2012,19 @@ Troll:AddButton({
         local Vehicles = game.Workspace:FindFirstChild("Vehicles")
 
         if not RootPart or not Humanoid then
-            warn("Nenhum RootPart ou Humanoid encontrado!")
+            warn("No RootPart or Humanoid found!")
             return
         end
 
         Humanoid.PlatformStand = true
-        print("Jogador paralisado para reduzir efeitos do spin.")
+        print("Player paralyzed to reduce the effects of spin.")
 
         for _, obj in pairs(RootPart:GetChildren()) do
             if obj:IsA("BodyAngularVelocity") or obj:IsA("BodyVelocity") then
                 obj:Destroy()
             end
         end
-        print("Spin e forças removidas do jogador.")
+        print("Spin and forces removed from player.")
 
         game:GetService("ReplicatedStorage").RE:FindFirstChild("1Ca1r"):FireServer("DeleteAllVehicles")
         task.wait(0.5)
@@ -2043,7 +2036,7 @@ Troll:AddButton({
                     obj:Destroy()
                 end
             end
-            print("Spin removido do barco.")
+            print("Spin removed from the boat.")
         end
 
         task.wait(1)
@@ -2057,7 +2050,7 @@ Troll:AddButton({
         bg.CFrame = RootPart.CFrame
         bg.MaxTorque = Vector3.new(math.huge, math.huge, math.huge)
 
-        print("Jogador está preso na coordenada segura.")
+        print("Player is stuck at safe coordinate.")
 
         task.wait(3)
 
@@ -2065,7 +2058,7 @@ Troll:AddButton({
         bg:Destroy()
         Humanoid.PlatformStand = false
 
-        print("Jogador liberado, seguro na posição.")
+        print("Player released, secure in position.")
     end
 })
 
@@ -2073,7 +2066,7 @@ local kill = Troll:AddSection({Name = "Click Kill Methods"})
 
 Troll:AddButton({
   Name = "Click Fling Portas [Beta]",
-Description = "Para Usar, Recomendo chegar perto de outras portas, apos ela ir até você, clique no jogador que deseja flingar",
+Description = "To use, I recommend getting close to other doors, after it comes to you, click on the player you want to fling",
   Callback = function()
 local Players = game:GetService("Players")
 local Workspace = game:GetService("Workspace")
@@ -9243,4 +9236,5 @@ UniversalTab:AddButton({
         loadstring(game:HttpGet("https://raw.githubusercontent.com/SAZXHUB/Control-update/main/README.md", true))()
     end
 })
+
 
