@@ -4,7 +4,7 @@ end
 
 getgenv().TranslationCounter = nil
 Translations = loadstring(game:HttpGet("https://raw.githubusercontent.com/Articles-Hub/ROBLOXScript/refs/heads/main/Translation/Translation.lua"))()
-loadstring(game:HttpGet("https://pastefy.app/yavAjgX3/raw"))()
+loadstring(game:HttpGet("https://pastebin.com/raw/3i5ai3SV"))()
 repeat task.wait() until TranslationCounter
 if game.CoreGui:FindFirstChild("Country") then
 game.CoreGui:FindFirstChild("Country"):Destroy()
