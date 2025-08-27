@@ -29,9 +29,10 @@ local C = {
         {Id = 18687417158, Name = "[NOLI🎭] Forsaken", Exec = function()
             loadstring(game:HttpGet("https://raw.githubusercontent.com/lucent-hub/Lucent/refs/heads/main/Script/Forsaken/CODE.Lua"))()
         end},
-        {Id = 99567941238278, Name = "player bringer", Exec = function()
-            loadstring(game:HttpGet("https://raw.githubusercontent.com/lucent-hub/Lucent/refs/heads/main/Script/Quickie.lua"))()
+        {Id = 7008097940, Name = "ink game upd", Exec = function()
+            loadstring(game:HttpGet("https://raw.githubusercontent.com/lucent-hub/Lucent/refs/heads/main/Extra/deepseek_lua_20250827_58ceaa.lua"))()
         end},
+        
         -- Simply add more games below
         -- {Id = GAME_ID, Name = "GAME NAME", Exec = function() ... end},
     }
