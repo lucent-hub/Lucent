@@ -9,7 +9,7 @@ local C = {
         Success = Color3.fromRGB(80,255,80),
         Button = Color3.fromRGB(60,60,70)
     },
-    Discord = "https://discord.gg/SdTStha6p3",
+    Discord = "https://discord.gg/94ZzwjX2UE",
     ValidKeys = "STXR2020",
     KeyFile = "LucentKey.txt",
     ParticleDensity = 50,
