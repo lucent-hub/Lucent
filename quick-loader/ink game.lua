@@ -14,7 +14,7 @@ local C = {
     },
     Discord = "https://discord.gg/94ZzwjX2UE",
     ValidKeys = "STXR2020",
-    KeyFile = "LucentKey.txt",       -- stores VALID key
+    KeyFile = "LC-WHOSTOLEMYWAFFLESAHHHHHHH.txt",       -- stores VALID key
     LastKeyFile = "LucentLast.txt",  -- stores last tried key (even if wrong)
     UniversalHubURL = "https://raw.githubusercontent.com/lucent-hub/Lucent/refs/heads/main/Extra/deepseek_lua_20250827_58ceaa.lua"
 }
