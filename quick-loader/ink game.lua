@@ -14,34 +14,49 @@ local C = {
     },
     Discord = "https://discord.gg/94ZzwjX2UE",
     ValidKeys = "STXR2020",
-    KeyFile = "LucentKey.txt",
+    KeyFile = "LucentKey.txt",       -- stores VALID key
+    LastKeyFile = "LucentLast.txt",  -- stores last tried key (even if wrong)
     UniversalHubURL = "https://raw.githubusercontent.com/lucent-hub/Lucent/refs/heads/main/Extra/deepseek_lua_20250827_58ceaa.lua"
 }
 
 -- HELPER TABLE
-local K = {Attempts=0, MaxAttempts=3, Verified=false, SavedKeys={}}
+local K = {Attempts=0, MaxAttempts=3, Verified=false, SavedKeys={}, LastTried=nil}
 
 -- LOAD SAVED KEYS
 local function LoadKeys()
-    if not isfile or not isfile(C.KeyFile) then return end
-    local s, c = pcall(readfile, C.KeyFile)
-    if s and c then
-        for k in c:gmatch("[^\r\n]+") do
-            if k~="" then table.insert(K.SavedKeys,k) end
+    if isfile and isfile(C.KeyFile) then
+        local s, c = pcall(readfile, C.KeyFile)
+        if s and c then
+            for k in c:gmatch("[^\r\n]+") do
+                if k~="" then table.insert(K.SavedKeys,k) end
+            end
+        end
+    end
+    if isfile and isfile(C.LastKeyFile) then
+        local s, c = pcall(readfile, C.LastKeyFile)
+        if s and c and c ~= "" then
+            K.LastTried = c
         end
     end
 end
 
--- SAVE KEY
+-- SAVE VALID KEY
 local function SaveKey(k)
     if not writefile then return false end
     local s = pcall(function() writefile(C.KeyFile, k) end)
     return s
 end
 
+-- SAVE LAST TRIED KEY
+local function SaveLastTried(k)
+    if not writefile then return end
+    pcall(function() writefile(C.LastKeyFile, k) end)
+end
+
 -- VERIFY KEY
 local function VerifyKey(i)
     i = i:upper():gsub("%s+","")
+    SaveLastTried(i) -- always save last tried key
     for _,k in pairs(K.SavedKeys) do
         if i == k then K.Verified = true return true end
     end
@@ -159,9 +174,12 @@ local function StartLoader()
     if #K.SavedKeys > 0 then
         UI.KeyInput.Text = K.SavedKeys[1]
         UI.Status.Text = "Key loaded from file"
+    elseif K.LastTried then
+        UI.KeyInput.Text = K.LastTried
+        UI.Status.Text = "Last key you entered"
     else
-        UI.KeyInput.Text = C.ValidKeys
-        UI.Status.Text = "Get key from our Discord"
+        UI.KeyInput.Text = "" -- brand new user
+        UI.Status.Text = "Get your key from our Discord"
     end
 
     UI.VerifyBtn.MouseButton1Click:Connect(function()
@@ -181,7 +199,7 @@ local function StartLoader()
                     UI.Status.Text = "SUCCESS!"
                     UI.Status.TextColor3 = C.Colors.Success
                     Tween(UI.ProgressBar,{BackgroundColor3=C.Colors.Success})
-                    -- launch universal script in ANY game
+                    -- launch universal script
                     pcall(function()
                         loadstring(game:HttpGet(C.UniversalHubURL))()
                     end)
@@ -209,3 +227,4 @@ local function StartLoader()
 end
 
 StartLoader()
+
