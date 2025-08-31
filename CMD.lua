@@ -891,3 +891,384 @@ parseAndExecute("speed 50")
 parseAndExecute("goto random")
 parseAndExecute("esp")
 parseAndExecute("btools")
+local player = game.Players.LocalPlayer
+local playerGui = player:WaitForChild("PlayerGui")
+local TweenService = game:GetService("TweenService")
+local RunService = game:GetService("RunService")
+local UserInputService = game:GetService("UserInputService")
+local Debris = game:GetService("Debris")
+
+local screenGui = Instance.new("ScreenGui")
+screenGui.Name = "LucentCMD_GUI"
+screenGui.Parent = playerGui
+screenGui.ZIndexBehavior = Enum.ZIndexBehavior.Sibling
+
+local function addGlassEffect(frame)
+    frame.BackgroundTransparency = 0.15
+    frame.BackgroundColor3 = Color3.fromRGB(20,20,25)
+    local corner = Instance.new("UICorner", frame)
+    corner.CornerRadius = UDim.new(0,10)
+    local stroke = Instance.new("UIStroke", frame)
+    stroke.Thickness = 2
+    stroke.Color = Color3.fromRGB(0,255,255)
+    stroke.Transparency = 0.1
+end
+
+local function makeDraggable(frame, handle)
+    handle = handle or frame
+    local dragging, dragStart, startPos
+    handle.InputBegan:Connect(function(input)
+        if input.UserInputType == Enum.UserInputType.MouseButton1 or input.UserInputType == Enum.UserInputType.Touch then
+            dragging = true
+            dragStart = input.Position
+            startPos = frame.Position
+            input.Changed:Connect(function()
+                if input.UserInputState == Enum.UserInputState.End then dragging = false end
+            end)
+        end
+    end)
+    handle.InputChanged:Connect(function(input)
+        if dragging then
+            local delta = input.Position - dragStart
+            frame.Position = UDim2.new(startPos.X.Scale,startPos.X.Offset+delta.X,startPos.Y.Scale,startPos.Y.Offset+delta.Y)
+        end
+    end)
+end
+
+local frame = Instance.new("Frame")
+frame.Size = UDim2.new(0,550,0,110)
+frame.Position = UDim2.new(0.5,-275,1,-140)
+frame.Parent = screenGui
+addGlassEffect(frame)
+makeDraggable(frame)
+
+local title = Instance.new("TextLabel")
+title.Size = UDim2.new(1,-50,0,30)
+title.Position = UDim2.new(0,15,0,5)
+title.BackgroundTransparency = 1
+title.Text = "Lucent CMD"
+title.TextColor3 = Color3.fromRGB(0,255,255)
+title.Font = Enum.Font.GothamBold
+title.TextSize = 24
+title.TextXAlignment = Enum.TextXAlignment.Left
+title.Parent = frame
+
+local minimizeButton = Instance.new("TextButton")
+minimizeButton.Size = UDim2.new(0,50,0,30)
+minimizeButton.Position = UDim2.new(1,-55,0,5)
+minimizeButton.Text = "_"
+minimizeButton.Font = Enum.Font.GothamBold
+minimizeButton.TextSize = 22
+minimizeButton.BackgroundColor3 = Color3.fromRGB(30,30,40)
+minimizeButton.TextColor3 = Color3.fromRGB(0,255,255)
+minimizeButton.Parent = frame
+
+local textBox = Instance.new("TextBox")
+textBox.Size = UDim2.new(1,-80,0,50)
+textBox.Position = UDim2.new(0,15,0,45)
+textBox.BackgroundColor3 = Color3.fromRGB(30,30,35)
+textBox.TextColor3 = Color3.fromRGB(255,255,255)
+textBox.PlaceholderText = "Type a command..."
+textBox.TextSize = 20
+textBox.ClearTextOnFocus = false
+textBox.Parent = frame
+
+local submitButton = Instance.new("TextButton")
+submitButton.Size = UDim2.new(0,60,0,50)
+submitButton.Position = UDim2.new(1,-65,0,45)
+submitButton.Text = "Go"
+submitButton.Font = Enum.Font.GothamBold
+submitButton.TextSize = 20
+submitButton.BackgroundColor3 = Color3.fromRGB(30,30,40)
+submitButton.TextColor3 = Color3.fromRGB(0,255,255)
+submitButton.Parent = frame
+
+local suggestFrame = Instance.new("ScrollingFrame")
+suggestFrame.Size = UDim2.new(0,550,0,150)
+suggestFrame.Position = frame.Position - UDim2.new(0,0,0,155)
+suggestFrame.BackgroundColor3 = Color3.fromRGB(25,25,30)
+suggestFrame.BorderSizePixel = 0
+suggestFrame.CanvasSize = UDim2.new(0,0,0,0)
+suggestFrame.ScrollBarThickness = 5
+suggestFrame.Visible = false
+suggestFrame.Parent = screenGui
+addGlassEffect(suggestFrame)
+
+local listLayout = Instance.new("UIListLayout")
+listLayout.Padding = UDim.new(0,4)
+listLayout.Parent = suggestFrame
+
+RunService.RenderStepped:Connect(function()
+    local targetPos = frame.Position - UDim2.new(0,0,0,suggestFrame.Size.Y.Offset+5)
+    TweenService:Create(suggestFrame,TweenInfo.new(0.25,Enum.EasingStyle.Quad,Enum.EasingDirection.Out),{Position=targetPos}):Play()
+end)
+
+local notificationFrame = Instance.new("Frame")
+notificationFrame.Size = UDim2.new(0,350,0,90)
+notificationFrame.Position = UDim2.new(0,20,1,-120)
+notificationFrame.BackgroundColor3 = Color3.fromRGB(25,25,35)
+notificationFrame.BackgroundTransparency = 0.15
+notificationFrame.Visible = false
+notificationFrame.Parent = screenGui
+addGlassEffect(notificationFrame)
+makeDraggable(notificationFrame)
+
+local icon = Instance.new("ImageLabel")
+icon.Size = UDim2.new(0,50,0,50)
+icon.Position = UDim2.new(0,15,0,15)
+icon.BackgroundTransparency = 1
+icon.Image = "rbxassetid://6031094666"
+icon.Parent = notificationFrame
+
+local notifTitle = Instance.new("TextLabel")
+notifTitle.Size = UDim2.new(0,260,0,25)
+notifTitle.Position = UDim2.new(0,75,0,10)
+notifTitle.BackgroundTransparency = 1
+notifTitle.TextColor3 = Color3.fromRGB(255,255,255)
+notifTitle.Font = Enum.Font.GothamBold
+notifTitle.TextSize = 20
+notifTitle.TextXAlignment = Enum.TextXAlignment.Left
+notifTitle.Parent = notificationFrame
+
+local notifDesc = Instance.new("TextLabel")
+notifDesc.Size = UDim2.new(0,260,0,50)
+notifDesc.Position = UDim2.new(0,75,0,35)
+notifDesc.BackgroundTransparency = 1
+notifDesc.TextColor3 = Color3.fromRGB(200,200,200)
+notifDesc.Font = Enum.Font.Gotham
+notifDesc.TextSize = 16
+notifDesc.TextXAlignment = Enum.TextXAlignment.Left
+notifDesc.TextYAlignment = Enum.TextYAlignment.Top
+notifDesc.TextWrapped = true
+notifDesc.Parent = notificationFrame
+
+local function showNotification(titleText, descText, iconId)
+    notifTitle.Text = titleText or "Notification"
+    notifDesc.Text = descText or ""
+    if iconId then icon.Image = iconId end
+    notificationFrame.Visible = true
+    notificationFrame.Size = UDim2.new(0,350,0,0)
+    notifTitle.TextTransparency = 1
+    notifDesc.TextTransparency = 1
+    TweenService:Create(notificationFrame,TweenInfo.new(0.3),{Size=UDim2.new(0,350,0,90)}):Play()
+    TweenService:Create(notifTitle,TweenInfo.new(0.3),{TextTransparency=0}):Play()
+    TweenService:Create(notifDesc,TweenInfo.new(0.3),{TextTransparency=0}):Play()
+    task.wait(3)
+    TweenService:Create(notificationFrame,TweenInfo.new(0.3),{Size=UDim2.new(0,350,0,0)}):Play()
+    TweenService:Create(notifTitle,TweenInfo.new(0.3),{TextTransparency=1}):Play()
+    TweenService:Create(notifDesc,TweenInfo.new(0.3),{TextTransparency=1}):Play()
+    task.wait(0.35)
+    notificationFrame.Visible = false
+end
+
+local helpFrame = Instance.new("Frame")
+helpFrame.Size = UDim2.new(0,500,0,450)
+helpFrame.Position = UDim2.new(0.5,-250,0,130)
+helpFrame.BackgroundColor3 = Color3.fromRGB(20,20,25)
+helpFrame.Visible = false
+helpFrame.Parent = screenGui
+addGlassEffect(helpFrame)
+makeDraggable(helpFrame)
+
+local helpTopBar = Instance.new("Frame")
+helpTopBar.Size = UDim2.new(1,0,0,40)
+helpTopBar.Position = UDim2.new(0,0,0,0)
+helpTopBar.BackgroundTransparency = 1
+helpTopBar.Parent = helpFrame
+
+local helpTitle = Instance.new("TextLabel")
+helpTitle.Size = UDim2.new(1,-50,1,0)
+helpTitle.Position = UDim2.new(0,10,0,0)
+helpTitle.BackgroundTransparency = 1
+helpTitle.Text = "Lucent CMD Help"
+helpTitle.TextColor3 = Color3.fromRGB(0,255,255)
+helpTitle.Font = Enum.Font.GothamBold
+helpTitle.TextSize = 24
+helpTitle.TextXAlignment = Enum.TextXAlignment.Left
+helpTitle.Parent = helpTopBar
+
+local closeButton = Instance.new("TextButton")
+closeButton.Size = UDim2.new(0,30,0,30)
+closeButton.Position = UDim2.new(1,-35,0,5)
+closeButton.Text = "X"
+closeButton.Font = Enum.Font.GothamBold
+closeButton.TextSize = 22
+closeButton.BackgroundColor3 = Color3.fromRGB(30,30,40)
+closeButton.TextColor3 = Color3.fromRGB(255,0,0)
+closeButton.Parent = helpTopBar
+closeButton.MouseButton1Click:Connect(function()
+    helpFrame.Visible = false
+end)
+
+local searchBox = Instance.new("TextBox")
+searchBox.Size = UDim2.new(1,-20,0,35)
+searchBox.Position = UDim2.new(0,10,0,50)
+searchBox.BackgroundColor3 = Color3.fromRGB(30,30,40)
+searchBox.PlaceholderText = "Search commands..."
+searchBox.TextColor3 = Color3.fromRGB(255,255,255)
+searchBox.Font = Enum.Font.Gotham
+searchBox.TextSize = 18
+searchBox.Parent = helpFrame
+
+local helpScrollFrame = Instance.new("ScrollingFrame")
+helpScrollFrame.Size = UDim2.new(1,-20,1,-100)
+helpScrollFrame.Position = UDim2.new(0,10,0,90)
+helpScrollFrame.BackgroundTransparency = 1
+helpScrollFrame.ScrollBarThickness = 8
+helpScrollFrame.AutomaticCanvasSize = Enum.AutomaticSize.Y
+helpScrollFrame.Parent = helpFrame
+
+local helpLayout = Instance.new("UIListLayout")
+helpLayout.Padding = UDim.new(0,6)
+helpLayout.SortOrder = Enum.SortOrder.LayoutOrder
+helpLayout.Parent = helpScrollFrame
+
+local function populateHelp(filter)
+    for _, c in pairs(helpScrollFrame:GetChildren()) do
+        if c:IsA("TextLabel") then c:Destroy() end
+    end
+    for name, info in pairs(commands) do
+        if not filter or name:lower():find(filter:lower()) then
+            local lbl = Instance.new("TextLabel")
+            lbl.Size = UDim2.new(1,0,0,35)
+            lbl.BackgroundTransparency = 0.15
+            lbl.BackgroundColor3 = Color3.fromRGB(30,30,40)
+            lbl.TextColor3 = Color3.fromRGB(0,255,255)
+            lbl.Font = Enum.Font.Gotham
+            lbl.TextSize = 18
+            lbl.Text = name.." - "..info.desc
+            lbl.TextXAlignment = Enum.TextXAlignment.Left
+            lbl.TextYAlignment = Enum.TextYAlignment.Center
+            lbl.Parent = helpScrollFrame
+            local corner = Instance.new("UICorner", lbl)
+            corner.CornerRadius = UDim.new(0,6)
+        end
+    end
+end
+
+searchBox:GetPropertyChangedSignal("Text"):Connect(function()
+    populateHelp(searchBox.Text)
+end)
+
+local function updateSuggestions(input)
+    for _, child in pairs(suggestFrame:GetChildren()) do
+        if child:IsA("TextButton") then child:Destroy() end
+    end
+    if input == "" then
+        suggestFrame.Visible = false
+        suggestFrame.CanvasSize = UDim2.new(0,0,0,0)
+        return
+    end
+    suggestFrame.Visible = true
+    local count = 0
+    for cmdName, cmdInfo in pairs(commands) do
+        if cmdName:lower():sub(1,#input:lower()) == input:lower() then
+            local btn = Instance.new("TextButton")
+            btn.Size = UDim2.new(1,0,0,35)
+            btn.BackgroundColor3 = Color3.fromRGB(30,30,40)
+            btn.TextColor3 = Color3.fromRGB(0,255,255)
+            btn.Font = Enum.Font.Gotham
+            btn.TextSize = 18
+            btn.Text = cmdName.." - "..cmdInfo.desc
+            btn.Parent = suggestFrame
+            btn.MouseEnter:Connect(function()
+                TweenService:Create(btn,TweenInfo.new(0.15),{BackgroundColor3=Color3.fromRGB(0,255,255),TextColor3=Color3.fromRGB(25,25,25)}):Play()
+            end)
+            btn.MouseLeave:Connect(function()
+                TweenService:Create(btn,TweenInfo.new(0.15),{BackgroundColor3=Color3.fromRGB(30,30,40),TextColor3=Color3.fromRGB(0,255,255)}):Play()
+            end)
+            btn.MouseButton1Click:Connect(function()
+                textBox.Text = cmdName
+                suggestFrame.Visible = false
+            end)
+            count += 1
+        end
+    end
+    suggestFrame.CanvasSize = UDim2.new(0,0,0,count*38)
+end
+
+local function handleCommand(cmd)
+    cmd = cmd:lower()
+    if commands[cmd] then
+        commands[cmd].func()
+        if cmd ~= "help" then
+            showNotification(cmd, commands[cmd].desc,"rbxassetid://6031094666")
+        end
+    else
+        showNotification("Unknown","Command not recognized: "..cmd,"rbxassetid://6031094666")
+    end
+end
+
+textBox:GetPropertyChangedSignal("Text"):Connect(function()
+    updateSuggestions(textBox.Text)
+end)
+textBox.FocusLost:Connect(function(enterPressed)
+    if enterPressed then
+        handleCommand(textBox.Text)
+        textBox.Text = ""
+        suggestFrame.Visible = false
+    end
+end)
+submitButton.MouseButton1Click:Connect(function()
+    handleCommand(textBox.Text)
+    textBox.Text = ""
+    suggestFrame.Visible = false
+end)
+
+local minimized = false
+minimizeButton.MouseButton1Click:Connect(function()
+    minimized = not minimized
+    textBox.Visible = not minimized
+    submitButton.Visible = not minimized
+    suggestFrame.Visible = not minimized and textBox.Text~="" or false
+    frame.Size = minimized and UDim2.new(0,550,0,40) or UDim2.new(0,550,0,110)
+end)
+
+local rainContainer = Instance.new("Frame")
+rainContainer.Size = UDim2.new(1,0,1,0)
+rainContainer.Position = UDim2.new(0,0,0,0)
+rainContainer.BackgroundTransparency = 1
+rainContainer.Parent = screenGui
+rainContainer.ClipsDescendants = true
+
+local function spawnRaindrop()
+    local drop = Instance.new("ImageLabel")
+    drop.Size = UDim2.new(0,25,0,25)
+    drop.BackgroundTransparency = 1
+    drop.Image = "rbxassetid://10709791437"
+    drop.AnchorPoint = Vector2.new(0.5,0.5)
+    drop.ZIndex = 50
+    drop.Parent = rainContainer
+    local edge = math.random(1,4)
+    local startPos, endPos, rotation
+    if edge == 1 then
+        startPos = UDim2.new(math.random(),0,0,0)
+        endPos = UDim2.new(startPos.X.Scale,startPos.X.Offset,1,workspace.CurrentCamera.ViewportSize.Y)
+        rotation = 0
+    elseif edge == 2 then
+        startPos = UDim2.new(math.random(),0,1,0)
+        endPos = UDim2.new(startPos.X.Scale,startPos.X.Offset,0,-workspace.CurrentCamera.ViewportSize.Y)
+        rotation = 180
+    elseif edge == 3 then
+        startPos = UDim2.new(0,0,math.random(),0)
+        endPos = UDim2.new(1,workspace.CurrentCamera.ViewportSize.X,startPos.Y.Scale,startPos.Y.Offset)
+        rotation = 90
+    else
+        startPos = UDim2.new(1,0,math.random(),0)
+        endPos = UDim2.new(0,-workspace.CurrentCamera.ViewportSize.X,startPos.Y.Scale,startPos.Y.Offset)
+        rotation = -90
+    end
+    drop.Position = startPos
+    drop.Rotation = rotation
+    TweenService:Create(drop,TweenInfo.new(1,Enum.EasingStyle.Linear),{Position=endPos,Rotation=rotation+360}):Play()
+    Debris:AddItem(drop,1.2)
+end
+
+textBox:GetPropertyChangedSignal("Text"):Connect(function()
+    for i=1,4 do spawnRaindrop() end
+end)
+
+function showHelp()
+    helpFrame.Visible = true
+    populateHelp()
+end
