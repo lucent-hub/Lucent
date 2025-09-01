@@ -27,19 +27,19 @@ function LucentHub.new(title, width, height)
     self.scriptsPerPage = 6
 
     self.mainTabFrame = Instance.new("Frame")
-    self.mainTabFrame.Size = UDim2.new(0, 120, 0, 220)
-    self.mainTabFrame.Position = UDim2.new(0, 5, 0.5, -110)
+    self.mainTabFrame.Size = UDim2.new(0, 120, 1, -50)
+    self.mainTabFrame.Position = UDim2.new(0, 5, 0, 45)
     self.mainTabFrame.BackgroundColor3 = Color3.fromRGB(50, 50, 50)
     self.mainTabFrame.Parent = self.mainFrame
     Instance.new("UICorner", self.mainTabFrame).CornerRadius = UDim.new(0, 12)
 
-    self:_createPageNavigation()
     self.pagesContainer = Instance.new("Frame")
     self.pagesContainer.Size = UDim2.new(1, -140, 1, -110)
     self.pagesContainer.Position = UDim2.new(0, 130, 0, 50)
     self.pagesContainer.BackgroundTransparency = 1
     self.pagesContainer.Parent = self.mainFrame
 
+    self:_createPageNavigation()
     return self
 end
 
@@ -130,19 +130,18 @@ function LucentHub:ChangePage(delta)
 end
 
 function LucentHub:AddTab(tabName, scripts)
-    local tabCount = 0
-    for _ in pairs(self.mainTabButtons) do tabCount = tabCount + 1 end
-
     local tabBtn = Instance.new("TextButton")
-    tabBtn.Size = UDim2.new(1, -20, 0, 40)
-    tabBtn.Position = UDim2.new(0, 10, 0, (tabCount * 50) + 10)
-    tabBtn.Text = tabName
+    tabBtn.Size = UDim2.new(1, -10, 0, 40)
     tabBtn.BackgroundColor3 = Color3.fromRGB(80, 80, 80)
     tabBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
     tabBtn.TextScaled = true
     tabBtn.Font = Enum.Font.GothamBold
+    tabBtn.Text = tabName
     tabBtn.Parent = self.mainTabFrame
     Instance.new("UICorner", tabBtn).CornerRadius = UDim.new(0, 10)
+
+    local index = #self.mainTabButtons
+    tabBtn.Position = UDim2.new(0, 10, 0, (index * 50) + 10)
 
     self.mainTabButtons[tabName] = tabBtn
     self.tabPages[tabName] = {}
@@ -159,10 +158,10 @@ function LucentHub:AddTab(tabName, scripts)
         local endIdx = math.min(p * self.scriptsPerPage, #scripts)
 
         for i = startIdx, endIdx do
-            local scriptData = scripts[i]
+            local data = scripts[i]
             local btn = Instance.new("TextButton")
             btn.Size = UDim2.new(0, 110, 0, 40)
-            btn.Text = scriptData.Name
+            btn.Text = data.Name
             btn.TextScaled = true
             btn.Font = Enum.Font.Gotham
             btn.TextColor3 = Color3.fromRGB(255, 255, 255)
@@ -171,7 +170,7 @@ function LucentHub:AddTab(tabName, scripts)
             Instance.new("UICorner", btn).CornerRadius = UDim.new(0, 8)
 
             btn.MouseButton1Click:Connect(function()
-                local func, err = loadstring(scriptData.Code)
+                local func, err = loadstring(data.Code)
                 if func then func() else warn("Error:", err) end
             end)
         end
@@ -205,9 +204,9 @@ function LucentHub:HideAllPages()
 end
 
 function LucentHub:SelectFirstTab()
-    local firstTab = next(self.mainTabButtons)
-    if firstTab then
-        self.mainTabButtons[firstTab]:MouseButton1Click()
+    local first = next(self.mainTabButtons)
+    if first then
+        self.mainTabButtons[first]:MouseButton1Click()
     end
 end
 
