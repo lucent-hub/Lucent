@@ -186,6 +186,7 @@ function LucentHub:AddTab(tabName, scripts)
     end
 
     tabBtn.MouseButton1Click:Connect(function()
+        if self.currentTab == tabName then return end
         self.currentTab = tabName
         self.currentPageIndex = 1
         self:HideAllPages()
@@ -205,7 +206,9 @@ end
 function LucentHub:SelectFirstTab()
     local firstTab = next(self.mainTabButtons)
     if firstTab then
-        self.mainTabButtons[firstTab].MouseButton1Click:Fire()
+        task.defer(function()
+            self.mainTabButtons[firstTab].MouseButton1Click:Fire()
+        end)
     end
 end
 
