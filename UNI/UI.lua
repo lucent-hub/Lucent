@@ -34,7 +34,6 @@ function LucentHub.new(title, width, height)
     Instance.new("UICorner", self.mainTabFrame).CornerRadius = UDim.new(0, 12)
 
     self:_createPageNavigation()
-
     self.pagesContainer = Instance.new("Frame")
     self.pagesContainer.Size = UDim2.new(1, -140, 1, -110)
     self.pagesContainer.Position = UDim2.new(0, 130, 0, 50)
@@ -131,9 +130,12 @@ function LucentHub:ChangePage(delta)
 end
 
 function LucentHub:AddTab(tabName, scripts)
+    local tabCount = 0
+    for _ in pairs(self.mainTabButtons) do tabCount = tabCount + 1 end
+
     local tabBtn = Instance.new("TextButton")
     tabBtn.Size = UDim2.new(1, -20, 0, 40)
-    tabBtn.Position = UDim2.new(0, 10, 0, (#self.mainTabButtons * 50) + 10)
+    tabBtn.Position = UDim2.new(0, 10, 0, (tabCount * 50) + 10)
     tabBtn.Text = tabName
     tabBtn.BackgroundColor3 = Color3.fromRGB(80, 80, 80)
     tabBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
@@ -205,11 +207,7 @@ end
 function LucentHub:SelectFirstTab()
     local firstTab = next(self.mainTabButtons)
     if firstTab then
-        self.currentTab = firstTab
-        self.currentPageIndex = 1
-        self:HideAllPages()
-        self.tabPages[firstTab][self.currentPageIndex].Visible = true
-        self.pageLabel.Text = "Page " .. self.currentPageIndex
+        self.mainTabButtons[firstTab]:MouseButton1Click()
     end
 end
 
