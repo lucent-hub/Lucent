@@ -4,17 +4,37 @@ local UserInputService = game:GetService("UserInputService")
 local player = Players.LocalPlayer
 local playerGui = player:WaitForChild("PlayerGui")
 
+-- Create ScreenGui
 local screenGui = Instance.new("ScreenGui")
 screenGui.Name = "LucentHub"
 screenGui.ResetOnSpawn = false
+screenGui.ZIndexBehavior = Enum.ZIndexBehavior.Sibling
 screenGui.Parent = playerGui
 
+-- Main Frame with dark theme and rounded corners
 local mainFrame = Instance.new("Frame")
 mainFrame.Size = UDim2.new(0, 500, 0, 320)
 mainFrame.Position = UDim2.new(0.5, -250, 0.5, -160)
-mainFrame.BackgroundColor3 = Color3.fromRGB(35, 35, 35)
+mainFrame.BackgroundColor3 = Color3.fromRGB(20, 20, 20)
 mainFrame.Parent = screenGui
-Instance.new("UICorner", mainFrame).CornerRadius = UDim.new(0, 20)
+
+-- Add subtle shadow/glow effect
+local shadow = Instance.new("ImageLabel")
+shadow.Name = "Shadow"
+shadow.Image = "21645986"
+shadow.ImageColor3 = Color3.fromRGB(0, 200, 200)
+shadow.ImageTransparency = 0.8
+shadow.ScaleType = Enum.ScaleType.Slice
+shadow.SliceCenter = Rect.new(10, 10, 118, 118)
+shadow.Size = UDim2.new(1, 20, 1, 20)
+shadow.Position = UDim2.new(0, -10, 0, -10)
+shadow.BackgroundTransparency = 1
+shadow.Parent = mainFrame
+
+-- Rounded corners
+local corner = Instance.new("UICorner")
+corner.CornerRadius = UDim.new(0, 12)
+corner.Parent = mainFrame
 
 -- Make main frame draggable
 local dragging = false
@@ -51,16 +71,20 @@ UserInputService.InputChanged:Connect(function(input)
     end
 end)
 
+-- Title Bar
 local titleFrame = Instance.new("Frame")
 titleFrame.Size = UDim2.new(1, 0, 0, 40)
-titleFrame.BackgroundColor3 = Color3.fromRGB(25, 25, 25)
+titleFrame.BackgroundColor3 = Color3.fromRGB(15, 15, 15)
 titleFrame.Parent = mainFrame
-Instance.new("UICorner", titleFrame).CornerRadius = UDim.new(0, 8)
+
+local titleCorner = Instance.new("UICorner")
+titleCorner.CornerRadius = UDim.new(0, 8)
+titleCorner.Parent = titleFrame
 
 local titleLabel = Instance.new("TextLabel")
 titleLabel.Size = UDim2.new(0.6, 0, 1, 0)
-titleLabel.Position = UDim2.new(0, 10, 0, 0)
-titleLabel.Text = "Lucent Hub"
+titleLabel.Position = UDim2.new(0, 15, 0, 0)
+titleLabel.Text = "LUCENT HUB"
 titleLabel.TextColor3 = Color3.fromRGB(255, 255, 255)
 titleLabel.BackgroundTransparency = 1
 titleLabel.TextScaled = true
@@ -68,27 +92,54 @@ titleLabel.Font = Enum.Font.GothamBold
 titleLabel.TextXAlignment = Enum.TextXAlignment.Left
 titleLabel.Parent = titleFrame
 
+-- Close Button with cyan accent
 local closeButton = Instance.new("TextButton")
-closeButton.Size = UDim2.new(0, 40, 0, 30)
-closeButton.Position = UDim2.new(0.9, -45, 0.5, -15)
+closeButton.Size = UDim2.new(0, 30, 0, 30)
+closeButton.Position = UDim2.new(1, -40, 0.5, -15)
 closeButton.Text = "X"
-closeButton.TextScaled = true
-closeButton.BackgroundColor3 = Color3.fromRGB(200, 50, 50)
 closeButton.TextColor3 = Color3.fromRGB(255, 255, 255)
+closeButton.TextScaled = true
+closeButton.Font = Enum.Font.GothamBold
+closeButton.BackgroundColor3 = Color3.fromRGB(200, 50, 50)
 closeButton.Parent = titleFrame
-Instance.new("UICorner", closeButton).CornerRadius = UDim.new(0, 8)
 
--- Reopen button positioned in the middle of the screen with cyan color
+local closeCorner = Instance.new("UICorner")
+closeCorner.CornerRadius = UDim.new(0, 6)
+closeCorner.Parent = closeButton
+
+-- Close button hover effect
+closeButton.MouseEnter:Connect(function()
+    TweenService:Create(closeButton, TweenInfo.new(0.2), {BackgroundColor3 = Color3.fromRGB(220, 70, 70)}):Play()
+end)
+
+closeButton.MouseLeave:Connect(function()
+    TweenService:Create(closeButton, TweenInfo.new(0.2), {BackgroundColor3 = Color3.fromRGB(200, 50, 50)}):Play()
+end)
+
+-- Reopen Button with cyan accent (positioned in middle)
 local reopenButton = Instance.new("TextButton")
 reopenButton.Size = UDim2.new(0, 120, 0, 40)
 reopenButton.Position = UDim2.new(0.5, -60, 0.5, -20)
-reopenButton.BackgroundColor3 = Color3.fromRGB(0, 200, 200) -- Cyan
-reopenButton.Text = "Open Hub"
-reopenButton.TextScaled = true
+reopenButton.BackgroundColor3 = Color3.fromRGB(0, 150, 150)
+reopenButton.Text = "OPEN HUB"
 reopenButton.TextColor3 = Color3.fromRGB(255, 255, 255)
+reopenButton.TextScaled = true
+reopenButton.Font = Enum.Font.GothamBold
 reopenButton.Visible = false
 reopenButton.Parent = screenGui
-Instance.new("UICorner", reopenButton).CornerRadius = UDim.new(0, 10)
+
+local reopenCorner = Instance.new("UICorner")
+reopenCorner.CornerRadius = UDim.new(0, 10)
+reopenCorner.Parent = reopenButton
+
+-- Reopen button hover effect
+reopenButton.MouseEnter:Connect(function()
+    TweenService:Create(reopenButton, TweenInfo.new(0.2), {BackgroundColor3 = Color3.fromRGB(0, 200, 200)}):Play()
+end)
+
+reopenButton.MouseLeave:Connect(function()
+    TweenService:Create(reopenButton, TweenInfo.new(0.2), {BackgroundColor3 = Color3.fromRGB(0, 150, 150)}):Play()
+end)
 
 -- Make reopen button draggable
 local reopenDragging = false
@@ -125,13 +176,18 @@ UserInputService.InputChanged:Connect(function(input)
     end
 end)
 
+-- Tabs Sidebar
 local tabFrame = Instance.new("Frame")
 tabFrame.Size = UDim2.new(0, 120, 1, -50)
-tabFrame.Position = UDim2.new(0, 5, 0, 45)
-tabFrame.BackgroundColor3 = Color3.fromRGB(50, 50, 50)
+tabFrame.Position = UDim2.new(0, 10, 0, 45)
+tabFrame.BackgroundColor3 = Color3.fromRGB(25, 25, 25)
 tabFrame.Parent = mainFrame
-Instance.new("UICorner", tabFrame).CornerRadius = UDim.new(0, 12)
 
+local tabCorner = Instance.new("UICorner")
+tabCorner.CornerRadius = UDim.new(0, 10)
+tabCorner.Parent = tabFrame
+
+-- Pages Container
 local pagesContainer = Instance.new("Frame")
 pagesContainer.Size = UDim2.new(1, -140, 1, -110)
 pagesContainer.Position = UDim2.new(0, 130, 0, 50)
@@ -139,6 +195,7 @@ pagesContainer.BackgroundTransparency = 1
 pagesContainer.ClipsDescendants = true
 pagesContainer.Parent = mainFrame
 
+-- Tabs and Pages Data
 local tabs = {
     Scripts = {
         {Name = "Fly Script", Code = "print('fly')"},
@@ -162,6 +219,7 @@ local currentTab = nil
 local currentPageIndex = 1
 local scriptsPerPage = 6
 
+-- Page Navigation
 local navFrame = Instance.new("Frame")
 navFrame.Size = UDim2.new(0, 160, 0, 40)
 navFrame.Position = UDim2.new(1, -170, 1, -50)
@@ -173,10 +231,22 @@ prevPageBtn.Size = UDim2.new(0, 40, 1, 0)
 prevPageBtn.Text = "<"
 prevPageBtn.TextScaled = true
 prevPageBtn.Font = Enum.Font.GothamBold
-prevPageBtn.BackgroundColor3 = Color3.fromRGB(80, 80, 80)
+prevPageBtn.BackgroundColor3 = Color3.fromRGB(40, 40, 40)
 prevPageBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
 prevPageBtn.Parent = navFrame
-Instance.new("UICorner", prevPageBtn).CornerRadius = UDim.new(0, 10)
+
+local prevCorner = Instance.new("UICorner")
+prevCorner.CornerRadius = UDim.new(0, 8)
+prevCorner.Parent = prevPageBtn
+
+-- Nav button hover effect
+prevPageBtn.MouseEnter:Connect(function()
+    TweenService:Create(prevPageBtn, TweenInfo.new(0.2), {BackgroundColor3 = Color3.fromRGB(0, 150, 150)}):Play()
+end)
+
+prevPageBtn.MouseLeave:Connect(function()
+    TweenService:Create(prevPageBtn, TweenInfo.new(0.2), {BackgroundColor3 = Color3.fromRGB(40, 40, 40)}):Play()
+end)
 
 local pageLabel = Instance.new("TextLabel")
 pageLabel.Size = UDim2.new(0, 80, 1, 0)
@@ -194,10 +264,22 @@ nextPageBtn.Position = UDim2.new(0, 120, 0, 0)
 nextPageBtn.Text = ">"
 nextPageBtn.TextScaled = true
 nextPageBtn.Font = Enum.Font.GothamBold
-nextPageBtn.BackgroundColor3 = Color3.fromRGB(80, 80, 80)
+nextPageBtn.BackgroundColor3 = Color3.fromRGB(40, 40, 40)
 nextPageBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
 nextPageBtn.Parent = navFrame
-Instance.new("UICorner", nextPageBtn).CornerRadius = UDim.new(0, 10)
+
+local nextCorner = Instance.new("UICorner")
+nextCorner.CornerRadius = UDim.new(0, 8)
+nextCorner.Parent = nextPageBtn
+
+-- Nav button hover effect
+nextPageBtn.MouseEnter:Connect(function()
+    TweenService:Create(nextPageBtn, TweenInfo.new(0.2), {BackgroundColor3 = Color3.fromRGB(0, 150, 150)}):Play()
+end)
+
+nextPageBtn.MouseLeave:Connect(function()
+    TweenService:Create(nextPageBtn, TweenInfo.new(0.2), {BackgroundColor3 = Color3.fromRGB(40, 40, 40)}):Play()
+end)
 
 -- Tween functions
 local function tweenIn(object)
@@ -244,13 +326,13 @@ end
 -- Tab button animations
 local function tweenTabHighlight(button)
     local tweenInfo = TweenInfo.new(0.2, Enum.EasingStyle.Quad, Enum.EasingDirection.Out)
-    local tween = TweenService:Create(button, tweenInfo, {BackgroundColor3 = Color3.fromRGB(0, 180, 180)}) -- Cyan highlight
+    local tween = TweenService:Create(button, tweenInfo, {BackgroundColor3 = Color3.fromRGB(0, 150, 150)})
     tween:Play()
 end
 
 local function tweenTabUnhighlight(button)
     local tweenInfo = TweenInfo.new(0.2, Enum.EasingStyle.Quad, Enum.EasingDirection.Out)
-    local tween = TweenService:Create(button, tweenInfo, {BackgroundColor3 = Color3.fromRGB(80, 80, 80)})
+    local tween = TweenService:Create(button, tweenInfo, {BackgroundColor3 = Color3.fromRGB(40, 40, 40)})
     tween:Play()
 end
 
@@ -278,18 +360,35 @@ local function layoutPageButtons(page)
     end
 end
 
+-- Create Tabs and Pages
 local tabIndex = 0
 for tabName, scripts in pairs(tabs) do
     local tabBtn = Instance.new("TextButton")
     tabBtn.Size = UDim2.new(1, -20, 0, 40)
     tabBtn.Position = UDim2.new(0, 10, 0, (tabIndex * 50) + 10)
     tabBtn.Text = tabName
-    tabBtn.BackgroundColor3 = Color3.fromRGB(80, 80, 80)
+    tabBtn.BackgroundColor3 = Color3.fromRGB(40, 40, 40)
     tabBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
     tabBtn.TextScaled = true
     tabBtn.Font = Enum.Font.GothamBold
     tabBtn.Parent = tabFrame
-    Instance.new("UICorner", tabBtn).CornerRadius = UDim.new(0, 10)
+    
+    local tabBtnCorner = Instance.new("UICorner")
+    tabBtnCorner.CornerRadius = UDim.new(0, 8)
+    tabBtnCorner.Parent = tabBtn
+    
+    -- Tab button hover effect
+    tabBtn.MouseEnter:Connect(function()
+        if currentTab ~= tabName then
+            TweenService:Create(tabBtn, TweenInfo.new(0.2), {BackgroundColor3 = Color3.fromRGB(60, 60, 60)}):Play()
+        end
+    end)
+    
+    tabBtn.MouseLeave:Connect(function()
+        if currentTab ~= tabName then
+            TweenService:Create(tabBtn, TweenInfo.new(0.2), {BackgroundColor3 = Color3.fromRGB(40, 40, 40)}):Play()
+        end
+    end)
     
     tabButtons[tabName] = tabBtn
 
@@ -314,21 +413,20 @@ for tabName, scripts in pairs(tabs) do
             btn.TextScaled = true
             btn.Font = Enum.Font.Gotham
             btn.TextColor3 = Color3.fromRGB(255, 255, 255)
-            btn.BackgroundColor3 = Color3.fromRGB(0, 180, 180) -- Cyan
+            btn.BackgroundColor3 = Color3.fromRGB(0, 130, 130)
             btn.Parent = page
-            Instance.new("UICorner", btn).CornerRadius = UDim.new(0, 8)
+            
+            local btnCorner = Instance.new("UICorner")
+            btnCorner.CornerRadius = UDim.new(0, 8)
+            btnCorner.Parent = btn
 
             -- Button hover animation
             btn.MouseEnter:Connect(function()
-                local tweenInfo = TweenInfo.new(0.2, Enum.EasingStyle.Quad, Enum.EasingDirection.Out)
-                local tween = TweenService:Create(btn, tweenInfo, {BackgroundColor3 = Color3.fromRGB(0, 220, 220)}) -- Lighter cyan
-                tween:Play()
+                TweenService:Create(btn, TweenInfo.new(0.2), {BackgroundColor3 = Color3.fromRGB(0, 180, 180)}):Play()
             end)
             
             btn.MouseLeave:Connect(function()
-                local tweenInfo = TweenInfo.new(0.2, Enum.EasingStyle.Quad, Enum.EasingDirection.Out)
-                local tween = TweenService:Create(btn, tweenInfo, {BackgroundColor3 = Color3.fromRGB(0, 180, 180)}) -- Cyan
-                tween:Play()
+                TweenService:Create(btn, TweenInfo.new(0.2), {BackgroundColor3 = Color3.fromRGB(0, 130, 130)}):Play()
             end)
 
             btn.MouseButton1Click:Connect(function()
@@ -376,6 +474,7 @@ for tabName, scripts in pairs(tabs) do
     tabIndex = tabIndex + 1
 end
 
+-- Page Navigation
 prevPageBtn.MouseButton1Click:Connect(function()
     if not currentTab then return end
     
@@ -408,6 +507,7 @@ nextPageBtn.MouseButton1Click:Connect(function()
     end)
 end)
 
+-- Close and reopen functionality
 closeButton.MouseButton1Click:Connect(function()
     tweenOut(mainFrame, function()
         reopenButton.Visible = true
