@@ -1,6 +1,7 @@
 --// Services
 local Players = game:GetService("Players")
 local UserInputService = game:GetService("UserInputService")
+local RunService = game:GetService("RunService")
 local player = Players.LocalPlayer
 local playerGui = player:WaitForChild("PlayerGui")
 
@@ -102,7 +103,7 @@ end
 
 local reopenBtn
 
--- Minimize Button ➖
+-- Minimize Button
 local minimizeBtn = createTopBtn("–", UDim2.new(0.9, 0, 0.5, 0), function()
     mainFrame.Visible = false
 
@@ -129,12 +130,12 @@ local minimizeBtn = createTopBtn("–", UDim2.new(0.9, 0, 0.5, 0), function()
     end)
 end)
 
--- Close Button ✖
+-- Close Button
 local closeBtn = createTopBtn("X", UDim2.new(1, -5, 0.5, 0), function()
     screenGui:Destroy()
 end)
 
--- Toggle container (scrollable)
+-- Toggle container
 local toggleContainer = Instance.new("ScrollingFrame")
 toggleContainer.Size = UDim2.new(1, -20, 1, -60)
 toggleContainer.Position = UDim2.new(0, 10, 0, 50)
@@ -252,7 +253,7 @@ local function createSlider(name, min, max, default, callback)
     end)
 end
 
--- Fixed Dropdown
+-- Dropdown
 local function createDropdown(name, options, defaultIndex, callback)
     local dropFrame = Instance.new("Frame")
     dropFrame.Size = UDim2.new(0.9, 0, 0, 40)
@@ -294,7 +295,6 @@ local function createDropdown(name, options, defaultIndex, callback)
     local listOpen = false
     local listFrame
 
-    -- Function to close dropdown
     local function closeDropdown()
         if listFrame then
             listFrame:Destroy()
@@ -304,7 +304,6 @@ local function createDropdown(name, options, defaultIndex, callback)
         dropFrame.Size = UDim2.new(0.9, 0, 0, 40)
     end
 
-    -- Function to open dropdown
     local function openDropdown()
         if listOpen then return end
         
@@ -317,10 +316,6 @@ local function createDropdown(name, options, defaultIndex, callback)
         listFrame.BackgroundColor3 = Color3.fromRGB(30, 30, 30)
         listFrame.BorderSizePixel = 0
         listFrame.Parent = dropFrame
-        
-        local lcorner = Instance.new("UICorner")
-        lcorner.CornerRadius = UDim.new(0, 0, 0, 10)
-        lcorner.Parent = listFrame
         
         local listLayout = Instance.new("UIListLayout")
         listLayout.Parent = listFrame
@@ -361,30 +356,7 @@ local function createDropdown(name, options, defaultIndex, callback)
             openDropdown()
         end
     end)
-    
-    -- Close dropdown when clicking elsewhere
-    local connection
-    connection = UserInputService.InputBegan:Connect(function(input)
-        if listOpen and input.UserInputType == Enum.UserInputType.MouseButton1 then
-            local mousePos = input.Position
-            local dropAbsPos = dropFrame.AbsolutePosition
-            local dropAbsSize = dropFrame.AbsoluteSize
-            
-            -- Check if click is outside the dropdown
-            if mousePos.X < dropAbsPos.X or mousePos.X > dropAbsPos.X + dropAbsSize.X or
-               mousePos.Y < dropAbsPos.Y or mousePos.Y > dropAbsPos.Y + dropAbsSize.Y then
-                closeDropdown()
-            end
-        end
-    end)
-    
-    -- Clean up connection when dropdown is destroyed
-    dropFrame.Destroying:Connect(function()
-        if connection then
-            connection:Disconnect()
-        end
-    end)
-    
+
     return {
         Set = function(value)
             if table.find(options, value) then
@@ -399,7 +371,6 @@ local function createDropdown(name, options, defaultIndex, callback)
     }
 end
 
-
 uiList:GetPropertyChangedSignal("AbsoluteContentSize"):Connect(function()
     toggleContainer.CanvasSize = UDim2.new(0, 0, 0, uiList.AbsoluteContentSize.Y + 10)
 end)
@@ -413,55 +384,42 @@ local settings = {
     TargetBone = "Head"
 }
 
---// Functions to update settings
-local function setWallCheck(val)
-    settings.WallCheck = val
-end
+-- Toggles
+createToggle("Wall Check", settings.WallCheck, function(val) settings.WallCheck = val end)
+createToggle("Team Check", settings.TeamCheck, function(val) settings.TeamCheck = val end)
+createToggle("FOV Circle", settings.FOVCircle, function(val) settings.FOVCircle = val end)
 
-local function setTeamCheck(val)
-    settings.TeamCheck = val
-end
+-- Slider
+createSlider("Aim Smoothness", 1, 20, settings.AimSmoothness, function(val) settings.AimSmoothness = val end)
 
-local function setFOVCircle(val)
-    settings.FOVCircle = val
-end
+-- Dropdown
+--// Aimbot toggle
+local AimbotEnabled = false
+createToggle("Enable Aimbot", AimbotEnabled, function(val)
+    AimbotEnabled = val
+end)
 
-local function setAimSmoothness(val)
-    settings.AimSmoothness = val
-end
-
-local function setTargetBone(val)
-    settings.TargetBone = val
-end
-
---// Get the closest valid target
+--// Get closest target
 local function getClosestTarget()
     local closestPlayer = nil
     local shortestDistance = math.huge
 
-    for _, player in pairs(game.Players:GetPlayers()) do
-        if player ~= game.Players.LocalPlayer then
-            -- Team check
-            if settings.TeamCheck and player.Team == game.Players.LocalPlayer.Team then
-                continue
-            end
-
-            local character = player.Character
-            if character then
-                local bone
-                if settings.TargetBone == "Random" then
+    for _, plr in pairs(Players:GetPlayers()) do
+        if plr ~= player then
+            if settings.TeamCheck and plr.Team == player.Team then continue end
+            local char = plr.Character
+            if char then
+                local bone = settings.TargetBone
+                if bone == "Random" then
                     local bones = {"Head", "Torso"}
                     bone = bones[math.random(1, #bones)]
-                else
-                    bone = settings.TargetBone
                 end
-
-                local targetPart = character:FindFirstChild(bone)
-                if targetPart then
-                    local distance = (targetPart.Position - workspace.CurrentCamera.CFrame.Position).Magnitude
-                    if distance < shortestDistance then
-                        closestPlayer = player
-                        shortestDistance = distance
+                local part = char:FindFirstChild(bone)
+                if part then
+                    local dist = (part.Position - workspace.CurrentCamera.CFrame.Position).Magnitude
+                    if dist < shortestDistance then
+                        closestPlayer = plr
+                        shortestDistance = dist
                     end
                 end
             end
@@ -471,33 +429,25 @@ local function getClosestTarget()
     return closestPlayer
 end
 
---// Aim at the target smoothly
+--// Aim at target (only if toggle is on)
 local function aimAtTarget()
+    if not AimbotEnabled then return end  -- Skip if disabled
+
     local target = getClosestTarget()
     if target and target.Character then
-        local boneName = settings.TargetBone
-        if boneName == "Random" then
+        local bone = settings.TargetBone
+        if bone == "Random" then
             local bones = {"Head", "Torso"}
-            boneName = bones[math.random(1, #bones)]
+            bone = bones[math.random(1, #bones)]
         end
-
-        local targetPart = target.Character:FindFirstChild(boneName)
-        if targetPart then
-            local camera = workspace.CurrentCamera
-            local direction = (targetPart.Position - camera.CFrame.Position).Unit
-            camera.CFrame = CFrame.new(camera.CFrame.Position, camera.CFrame.Position + direction * settings.AimSmoothness)
+        local part = target.Character:FindFirstChild(bone)
+        if part then
+            local cam = workspace.CurrentCamera
+            local dir = (part.Position - cam.CFrame.Position).Unit
+            cam.CFrame = CFrame.new(cam.CFrame.Position, cam.CFrame.Position + dir * settings.AimSmoothness)
         end
     end
 end
 
 --// Main loop
-game:GetService("RunService").RenderStepped:Connect(function()
-    aimAtTarget()
-end)
-
---// Example of changing settings (no prints, GUI-free)
-setWallCheck(true)
-setTeamCheck(false)
-setFOVCircle(true)
-setAimSmoothness(7)
-setTargetBone("Torso")
+game:GetService("RunService").RenderStepped:Connect(aimAtTarget)
