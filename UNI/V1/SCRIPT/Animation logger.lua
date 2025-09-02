@@ -1,17 +1,14 @@
---// Services
 local Players = game:GetService("Players")
 local player = Players.LocalPlayer
 local playerGui = player:WaitForChild("PlayerGui")
 local UserInputService = game:GetService("UserInputService")
 local TweenService = game:GetService("TweenService")
 
---// ScreenGui
 local screenGui = Instance.new("ScreenGui")
 screenGui.Name = "AnimLoggerGUI"
 screenGui.ResetOnSpawn = false
 screenGui.Parent = playerGui
 
---// Drag function
 local function makeDraggable(frame)
     local dragging, dragInput, dragStart, startPos
     frame.InputBegan:Connect(function(input)
@@ -26,13 +23,11 @@ local function makeDraggable(frame)
             end)
         end
     end)
-
     frame.InputChanged:Connect(function(input)
         if input.UserInputType == Enum.UserInputType.MouseMovement or input.UserInputType == Enum.UserInputType.Touch then
             dragInput = input
         end
     end)
-
     UserInputService.InputChanged:Connect(function(input)
         if input == dragInput and dragging then
             local delta = input.Position - dragStart
@@ -42,7 +37,6 @@ local function makeDraggable(frame)
     end)
 end
 
---// Main Frame
 local mainFrame = Instance.new("Frame")
 mainFrame.Size = UDim2.new(0, 250, 0, 320)
 mainFrame.Position = UDim2.new(0.5,0,0.5,0)
@@ -55,7 +49,6 @@ uicorner.CornerRadius = UDim.new(0,10)
 uicorner.Parent = mainFrame
 makeDraggable(mainFrame)
 
---// Title Bar
 local titleBar = Instance.new("Frame")
 titleBar.Size = UDim2.new(1,0,0,30)
 titleBar.BackgroundColor3 = Color3.fromRGB(30,30,30)
@@ -64,7 +57,6 @@ local tbCorner = Instance.new("UICorner")
 tbCorner.CornerRadius = UDim.new(0,10)
 tbCorner.Parent = titleBar
 
--- Title Text
 local title = Instance.new("TextLabel")
 title.Size = UDim2.new(0.7,0,1,0)
 title.Position = UDim2.new(0,10,0,0)
@@ -76,7 +68,6 @@ title.TextColor3 = Color3.fromRGB(0,255,255)
 title.TextXAlignment = Enum.TextXAlignment.Left
 title.Parent = titleBar
 
--- Buttons
 local function createTopBtn(symbol, pos, callback)
     local btn = Instance.new("TextButton")
     btn.Size = UDim2.new(0,25,0,25)
@@ -96,10 +87,8 @@ local function createTopBtn(symbol, pos, callback)
 end
 
 local reopenBtn
--- Minimize Button
 local minimizeBtn = createTopBtn("-", UDim2.new(0.9,0,0.5,0), function()
     mainFrame.Visible = false
-
     reopenBtn = Instance.new("TextButton")
     reopenBtn.Size = UDim2.new(0,80,0,30)
     reopenBtn.Position = UDim2.new(0,20,1,-40)
@@ -114,19 +103,16 @@ local minimizeBtn = createTopBtn("-", UDim2.new(0.9,0,0.5,0), function()
     rcorner.CornerRadius = UDim.new(0,6)
     rcorner.Parent = reopenBtn
     makeDraggable(reopenBtn)
-
     reopenBtn.MouseButton1Click:Connect(function()
         mainFrame.Visible = true
         reopenBtn:Destroy()
     end)
 end)
 
--- Close Button
 local closeBtn = createTopBtn("X", UDim2.new(1, -5, 0.5, 0), function()
     screenGui:Destroy()
 end)
 
--- Search Box
 local searchBox = Instance.new("TextBox")
 searchBox.Size = UDim2.new(0.9,0,0,25)
 searchBox.Position = UDim2.new(0.05,0,0,35)
@@ -141,7 +127,6 @@ local sbCorner = Instance.new("UICorner")
 sbCorner.CornerRadius = UDim.new(0,6)
 sbCorner.Parent = searchBox
 
--- Scroll Frame
 local scroll = Instance.new("ScrollingFrame")
 scroll.Size = UDim2.new(1,-20,1,-70)
 scroll.Position = UDim2.new(0,10,0,65)
@@ -157,11 +142,9 @@ listLayout.Parent = scroll
 
 local logged = {}
 
--- Add animation function with Play
 local function addAnim(animName, animId)
     if logged[animId] then return end
     logged[animId] = true
-
     local frame = Instance.new("Frame")
     frame.Size = UDim2.new(0.95,0,0,28)
     frame.BackgroundColor3 = Color3.fromRGB(50,50,50)
@@ -169,7 +152,6 @@ local function addAnim(animName, animId)
     local corner = Instance.new("UICorner")
     corner.CornerRadius = UDim.new(0,6)
     corner.Parent = frame
-
     local label = Instance.new("TextLabel")
     label.Size = UDim2.new(0.5,0,1,0)
     label.Position = UDim2.new(0,5,0,0)
@@ -180,8 +162,6 @@ local function addAnim(animName, animId)
     label.TextSize = 14
     label.TextXAlignment = Enum.TextXAlignment.Left
     label.Parent = frame
-
-    -- Copy Button
     local copyBtn = Instance.new("TextButton")
     copyBtn.Size = UDim2.new(0.25,0,1,0)
     copyBtn.Position = UDim2.new(0.5,0,0,0)
@@ -197,8 +177,6 @@ local function addAnim(animName, animId)
     copyBtn.MouseButton1Click:Connect(function()
         setclipboard(animId)
     end)
-
-    -- Play Button
     local playBtn = Instance.new("TextButton")
     playBtn.Size = UDim2.new(0.25,0,1,0)
     playBtn.Position = UDim2.new(0.75,0,0,0)
@@ -220,18 +198,15 @@ local function addAnim(animName, animId)
             track:Play()
         end
     end)
-
     scroll.CanvasSize = UDim2.new(0,0,0,listLayout.AbsoluteContentSize.Y + 10)
 end
 
--- Fetch animations
 local function fetchPlayerAnims(p)
     local containers = {}
     if p.Character then table.insert(containers,p.Character) end
     table.insert(containers,workspace)
     table.insert(containers,game:GetService("ReplicatedStorage"))
     table.insert(containers,game:GetService("StarterPlayer"))
-
     for _,c in pairs(containers) do
         for _,obj in pairs(c:GetDescendants()) do
             if obj:IsA("Animation") then
@@ -246,7 +221,6 @@ for _,p in pairs(Players:GetPlayers()) do
 end
 Players.PlayerAdded:Connect(fetchPlayerAnims)
 
--- Search
 searchBox:GetPropertyChangedSignal("Text"):Connect(function()
     local text = searchBox.Text:lower()
     for _,child in pairs(scroll:GetChildren()) do
