@@ -1,0 +1,10 @@
+createToggle("Wall Check", true, function(val) print("Wall Check:", val) end)
+createToggle("Team Check", true, function(val) print("Team Check:", val) end)
+createToggle("FOV Circle", true, function(val) print("FOV Circle:", val) end)
+createSlider("Aim Smoothness", 1, 10, 5, function(val) print("Smoothness:", val) end)
+local targetBoneDropdown = createDropdown("Target Bone", {"Head", "Torso", "Random"}, 1, function(val) print("Target Bone:", val) end)
+
+-- Auto-resize scroll
+uiList:GetPropertyChangedSignal("AbsoluteContentSize"):Connect(function()
+    toggleContainer.CanvasSize = UDim2.new(0, 0, 0, uiList.AbsoluteContentSize.Y + 10)
+end)
