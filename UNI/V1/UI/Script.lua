@@ -1,17 +1,16 @@
---// Services
+
 local Players = game:GetService("Players")
 local UserInputService = game:GetService("UserInputService")
 local player = Players.LocalPlayer
 local playerGui = player:WaitForChild("PlayerGui")
 
---// ScreenGui
 local screenGui = Instance.new("ScreenGui")
 screenGui.Name = "SleekAimbotGUI"
 screenGui.ResetOnSpawn = false
 screenGui.IgnoreGuiInset = true
 screenGui.Parent = playerGui
 
---// Dragging function
+
 local function makeDraggable(frame)
     local dragging, dragInput, dragStart, startPos
     frame.InputBegan:Connect(function(input)
@@ -42,7 +41,7 @@ local function makeDraggable(frame)
     end)
 end
 
---// Main Frame
+
 local mainFrame = Instance.new("Frame")
 mainFrame.Size = UDim2.new(0.35, 0, 0.55, 0)
 mainFrame.Position = UDim2.new(0.5, 0, 0.5, 0)
@@ -57,7 +56,7 @@ local uicorner = Instance.new("UICorner")
 uicorner.CornerRadius = UDim.new(0, 12)
 uicorner.Parent = mainFrame
 
--- Title Bar
+
 local titleBar = Instance.new("Frame")
 titleBar.Size = UDim2.new(1, 0, 0, 40)
 titleBar.BackgroundColor3 = Color3.fromRGB(30, 30, 30)
@@ -78,7 +77,7 @@ title.TextColor3 = Color3.fromRGB(0, 255, 255)
 title.TextXAlignment = Enum.TextXAlignment.Left
 title.Parent = titleBar
 
--- Buttons (Minimize & Close)
+
 local function createTopBtn(symbol, pos, callback)
     local btn = Instance.new("TextButton")
     btn.Size = UDim2.new(0, 30, 0, 30)
@@ -102,7 +101,7 @@ end
 
 local reopenBtn
 
--- Minimize Button ➖
+
 local minimizeBtn = createTopBtn("–", UDim2.new(0.9, 0, 0.5, 0), function()
     mainFrame.Visible = false
 
@@ -129,12 +128,12 @@ local minimizeBtn = createTopBtn("–", UDim2.new(0.9, 0, 0.5, 0), function()
     end)
 end)
 
--- Close Button ✖
+
 local closeBtn = createTopBtn("X", UDim2.new(1, -5, 0.5, 0), function()
     screenGui:Destroy()
 end)
 
--- Toggle container (scrollable)
+
 local toggleContainer = Instance.new("ScrollingFrame")
 toggleContainer.Size = UDim2.new(1, -20, 1, -60)
 toggleContainer.Position = UDim2.new(0, 10, 0, 50)
@@ -150,7 +149,7 @@ uiList.HorizontalAlignment = Enum.HorizontalAlignment.Center
 uiList.SortOrder = Enum.SortOrder.LayoutOrder
 uiList.Parent = toggleContainer
 
--- Toggles
+
 local function createToggle(name, default, callback)
     local toggleFrame = Instance.new("Frame")
     toggleFrame.Size = UDim2.new(0.9, 0, 0, 40)
@@ -252,7 +251,7 @@ local function createSlider(name, min, max, default, callback)
     end)
 end
 
--- Fixed Dropdown
+-- Dropdown
 local function createDropdown(name, options, defaultIndex, callback)
     local dropFrame = Instance.new("Frame")
     dropFrame.Size = UDim2.new(0.9, 0, 0, 40)
@@ -362,7 +361,6 @@ local function createDropdown(name, options, defaultIndex, callback)
         end
     end)
     
-    -- Close dropdown when clicking elsewhere
     local connection
     connection = UserInputService.InputBegan:Connect(function(input)
         if listOpen and input.UserInputType == Enum.UserInputType.MouseButton1 then
@@ -370,7 +368,6 @@ local function createDropdown(name, options, defaultIndex, callback)
             local dropAbsPos = dropFrame.AbsolutePosition
             local dropAbsSize = dropFrame.AbsoluteSize
             
-            -- Check if click is outside the dropdown
             if mousePos.X < dropAbsPos.X or mousePos.X > dropAbsPos.X + dropAbsSize.X or
                mousePos.Y < dropAbsPos.Y or mousePos.Y > dropAbsPos.Y + dropAbsSize.Y then
                 closeDropdown()
@@ -378,7 +375,7 @@ local function createDropdown(name, options, defaultIndex, callback)
         end
     end)
     
-    -- Clean up connection when dropdown is destroyed
+
     dropFrame.Destroying:Connect(function()
         if connection then
             connection:Disconnect()
@@ -399,14 +396,14 @@ local function createDropdown(name, options, defaultIndex, callback)
     }
 end
 
--- Create UI Elements
+-- example idk
 createToggle("Wall Check", true, function(val) print("Wall Check:", val) end)
 createToggle("Team Check", true, function(val) print("Team Check:", val) end)
 createToggle("FOV Circle", true, function(val) print("FOV Circle:", val) end)
 createSlider("Aim Smoothness", 1, 10, 5, function(val) print("Smoothness:", val) end)
 local targetBoneDropdown = createDropdown("Target Bone", {"Head", "Torso", "Random"}, 1, function(val) print("Target Bone:", val) end)
 
--- Auto-resize scroll
+-- inf scroll ig
 uiList:GetPropertyChangedSignal("AbsoluteContentSize"):Connect(function()
     toggleContainer.CanvasSize = UDim2.new(0, 0, 0, uiList.AbsoluteContentSize.Y + 10)
 end)
