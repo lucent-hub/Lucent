@@ -1,0 +1,165 @@
+local Players = game:GetService("Players")
+local RunService = game:GetService("RunService")
+local UserInputService = game:GetService("UserInputService")
+local player = Players.LocalPlayer
+local char = player.Character or player.CharacterAdded:Wait()
+local hrp = char:WaitForChild("HumanoidRootPart")
+local playerGui = player:WaitForChild("PlayerGui")
+
+local screenGui = Instance.new("ScreenGui")
+screenGui.Name = "PositionReaderGUI"
+screenGui.ResetOnSpawn = false
+screenGui.Parent = playerGui
+
+local function makeDraggable(frame)
+    local dragging, dragInput, dragStart, startPos
+    frame.InputBegan:Connect(function(input)
+        if input.UserInputType == Enum.UserInputType.MouseButton1 or input.UserInputType == Enum.UserInputType.Touch then
+            dragging = true
+            dragStart = input.Position
+            startPos = frame.Position
+            input.Changed:Connect(function()
+                if input.UserInputState == Enum.UserInputState.End then dragging = false end
+            end)
+        end
+    end)
+    frame.InputChanged:Connect(function(input)
+        if input.UserInputType == Enum.UserInputType.MouseMovement or input.UserInputType == Enum.UserInputType.Touch then
+            dragInput = input
+        end
+    end)
+    UserInputService.InputChanged:Connect(function(input)
+        if input == dragInput and dragging then
+            local delta = input.Position - dragStart
+            frame.Position = UDim2.new(startPos.X.Scale, startPos.X.Offset + delta.X,
+                                       startPos.Y.Scale, startPos.Y.Offset + delta.Y)
+        end
+    end)
+end
+
+local frame = Instance.new("Frame")
+frame.Size = UDim2.new(0, 300, 0, 70)
+frame.Position = UDim2.new(0.5, -150, 0.85, 0)
+frame.AnchorPoint = Vector2.new(0.5, 0)
+frame.BackgroundColor3 = Color3.fromRGB(35, 35, 35)
+frame.Parent = screenGui
+makeDraggable(frame)
+
+local corner = Instance.new("UICorner")
+corner.CornerRadius = UDim.new(0, 10)
+corner.Parent = frame
+
+local titleBar = Instance.new("Frame")
+titleBar.Size = UDim2.new(1, 0, 0, 20)
+titleBar.BackgroundColor3 = Color3.fromRGB(30, 30, 30)
+titleBar.Parent = frame
+
+local barCorner = Instance.new("UICorner")
+barCorner.CornerRadius = UDim.new(0, 10)
+barCorner.Parent = titleBar
+
+local title = Instance.new("TextLabel")
+title.Size = UDim2.new(0.7, 0, 1, 0)
+title.Position = UDim2.new(0, 5, 0, 0)
+title.BackgroundTransparency = 1
+title.Text = "lucent | Pos Reader"
+title.Font = Enum.Font.GothamBold
+title.TextSize = 14
+title.TextColor3 = Color3.fromRGB(0, 255, 255)
+title.TextXAlignment = Enum.TextXAlignment.Left
+title.Parent = titleBar
+
+local function createTopBtn(symbol, pos, callback)
+    local btn = Instance.new("TextButton")
+    btn.Size = UDim2.new(0, 20, 0, 20)
+    btn.Position = pos
+    btn.AnchorPoint = Vector2.new(1, 0)
+    btn.BackgroundColor3 = Color3.fromRGB(40, 40, 40)
+    btn.Text = symbol
+    btn.TextColor3 = Color3.fromRGB(0, 255, 255)
+    btn.Font = Enum.Font.GothamBold
+    btn.TextSize = 14
+    btn.Parent = titleBar
+    local corner = Instance.new("UICorner")
+    corner.CornerRadius = UDim.new(0, 4)
+    corner.Parent = btn
+    btn.MouseButton1Click:Connect(callback)
+    return btn
+end
+
+local posLabel = Instance.new("TextLabel")
+posLabel.Size = UDim2.new(1, -20, 0, 20)
+posLabel.Position = UDim2.new(0, 10, 0, 25)
+posLabel.BackgroundTransparency = 1
+posLabel.Font = Enum.Font.Gotham
+posLabel.TextSize = 14
+posLabel.TextColor3 = Color3.fromRGB(0, 255, 255)
+posLabel.TextXAlignment = Enum.TextXAlignment.Left
+posLabel.Text = "X: 0, Y: 0, Z: 0"
+posLabel.Parent = frame
+
+local posTextbox = Instance.new("TextBox")
+posTextbox.Size = UDim2.new(1, -80, 0, 25)
+posTextbox.Position = UDim2.new(0, 10, 0, 45)
+posTextbox.BackgroundColor3 = Color3.fromRGB(60, 60, 60)
+posTextbox.TextColor3 = Color3.fromRGB(0, 255, 255)
+posTextbox.Font = Enum.Font.Gotham
+posTextbox.TextSize = 14
+posTextbox.Text = ""
+posTextbox.ClearTextOnFocus = false
+posTextbox.Parent = frame
+local tbCorner = Instance.new("UICorner")
+tbCorner.CornerRadius = UDim.new(0, 6)
+tbCorner.Parent = posTextbox
+
+local copyBtn = Instance.new("TextButton")
+copyBtn.Size = UDim2.new(0, 60, 0, 25)
+copyBtn.Position = UDim2.new(1, -70, 0, 45)
+copyBtn.BackgroundColor3 = Color3.fromRGB(0, 255, 255)
+copyBtn.TextColor3 = Color3.fromRGB(0,0,0)
+copyBtn.Font = Enum.Font.GothamBold
+copyBtn.TextSize = 14
+copyBtn.Text = "Copy"
+copyBtn.Parent = frame
+local cbCorner = Instance.new("UICorner")
+cbCorner.CornerRadius = UDim.new(0, 6)
+cbCorner.Parent = copyBtn
+
+copyBtn.MouseButton1Click:Connect(function()
+    local pos = hrp.Position
+    local posText = string.format("Vector3.new(%.2f, %.2f, %.2f)", pos.X, pos.Y, pos.Z)
+    posTextbox.Text = posText
+    setclipboard(posText)
+end)
+
+local reopenBtn
+createTopBtn("–", UDim2.new(0.9, 0, 0, 0), function()
+    frame.Visible = false
+    reopenBtn = Instance.new("TextButton")
+    reopenBtn.Size = UDim2.new(0, 100, 0, 30)
+    reopenBtn.Position = UDim2.new(0, 20, 1, -50)
+    reopenBtn.AnchorPoint = Vector2.new(0, 1)
+    reopenBtn.BackgroundColor3 = Color3.fromRGB(25, 25, 25)
+    reopenBtn.Text = "Pos UI"
+    reopenBtn.TextColor3 = Color3.fromRGB(0, 255, 255)
+    reopenBtn.Font = Enum.Font.GothamBold
+    reopenBtn.TextSize = 14
+    reopenBtn.Parent = screenGui
+    local rcorner = Instance.new("UICorner")
+    rcorner.CornerRadius = UDim.new(0, 8)
+    rcorner.Parent = reopenBtn
+    makeDraggable(reopenBtn)
+    reopenBtn.MouseButton1Click:Connect(function()
+        frame.Visible = true
+        reopenBtn:Destroy()
+    end)
+end)
+
+createTopBtn("X", UDim2.new(1, -5, 0, 0), function()
+    screenGui:Destroy()
+end)
+
+RunService.RenderStepped:Connect(function()
+    local pos = hrp.Position
+    posLabel.Text = string.format("X: %.2f, Y: %.2f, Z: %.2f", pos.X, pos.Y, pos.Z)
+end)
