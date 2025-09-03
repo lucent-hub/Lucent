@@ -1,30 +1,22 @@
 #!/bin/bash
-# Real PKG installer with fake install output
 
-if [ "$1" != "install" ] || [ -z "$2" ]; then
-    echo "Usage: pkg install <URL>"
-    exit 1
-fi
+# Mini Tera interpreter
+while true; do
+    # Prompt
+    read -p "ter " cmd args
 
-URL="$2"
-FILENAME=$(basename "$URL")
-
-# Fake installer messages
-echo "Updating package database..."
-sleep 1
-echo "Fetching package metadata..."
-sleep 1
-echo "Resolving dependencies..."
-sleep 1
-echo "Downloading $URL..."
-
-# Actual file download
-wget -q --show-progress "$URL" -O "$FILENAME"
-
-if [ $? -eq 0 ]; then
-    echo "Installing $FILENAME..."
-    sleep 1
-    echo "Package installed successfully: $FILENAME 🎉"
-else
-    echo "Error: Download failed."
-fi
+    if [ "$cmd $args" == "ter help" ]; then
+        echo "╔════════════════════════════════╗"
+        echo "║        Tera dox v0.01         ║"
+        echo "╚════════════════════════════════╝"
+        echo
+        echo "Ter help ~ shows tera help commands"
+        echo "More coming soon ..."
+    elif [ "$cmd" == "exit" ]; then
+        echo "Exiting Tera..."
+        break
+    else
+        echo "Unknown command: $cmd $args"
+        echo "Type 'ter help' for commands or 'exit' to quit"
+    fi
+done
