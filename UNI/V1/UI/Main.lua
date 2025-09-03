@@ -198,10 +198,13 @@ pagesContainer.Parent = mainFrame
 -- Tabs and Pages Data
 local tabs = {
     Scripts = {
-        {Name = "Fly Script", Code = "print('fly')"},
-        {Name = "ESP Script", Code = "print('esp')"},
-        {Name = "Speed Script", Code = "print('speed')"},
-        {Name = "Jump Script", Code = "print('jump')"},
+        {Name = "aimbot", Code = "loadstring(game:HttpGet("https://raw.githubusercontent.com/lucent-hub/Lucent/refs/heads/main/UNI/V1/SCRIPT/Aimbot.lua"))()
+            "},
+        {Name = "anima logger", Code = "loadstring(game:HttpGet("https://raw.githubusercontent.com/lucent-hub/Lucent/refs/heads/main/UNI/V1/SCRIPT/Animation%20logger.lua"))()
+                "},
+        {Name = "anim player", Code = "loadstring(game:HttpGet("https://raw.githubusercontent.com/lucent-hub/Lucent/refs/heads/main/UNI/V1/SCRIPT/anim%20player.lua"))()
+"},
+        {Name = "pos reader", Code = "https://raw.githubusercontent.com/lucent-hub/Lucent/refs/heads/main/UNI/V1/SCRIPT/pos%20reader"},
         {Name = "God Script", Code = "print('god')"},
         {Name = "Aim Script", Code = "print('aim')"},
         {Name = "Extra Script", Code = "print('extra')"},
