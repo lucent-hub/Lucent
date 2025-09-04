@@ -48,7 +48,7 @@ case "$COMMAND" in
     help)
         echo -e "$BANNER"
         echo -e "${CYAN}TERA - https://discord.gg/cSMhTqRNXR:${NC}\n"
-        echo -e "  ${GREEN}pkg help${NC}        - find cmds"
+        echo -e "  ${GREEN}./pkg help${NC}        - find cmds"
         echo -e "\n${YELLOW}Tip:${NC} wsg here my tools"
         ;;
     *)
